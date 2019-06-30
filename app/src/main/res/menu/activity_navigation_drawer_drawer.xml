@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_work"
+            android:icon="@drawable/ic_work"
+            android:title="@string/menu_work" />
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_work"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_add_new_list"
+            android:icon="@drawable/ic_add_new_list"
+            android:title="@string/add_new_list" />
+        <item
+            android:id="@+id/nav_done_tasks"
+            android:icon="@drawable/ic_done_tasks"
+            android:title="Done Tasks" />
+        <item
+            android:id="@+id/nav_later_tasks"
+            android:icon="@drawable/ic_done_tasks"
+            android:title="Later Tasks" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_setting"
+                android:icon="@drawable/ic_settings"
+                android:title="Setting" />
+
+        </menu>
+    </item>
+
+</menu>
