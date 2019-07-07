@@ -1,15 +1,29 @@
 package com.tbm.bamau.todoapp.Models;
 
-public class Settings {
-        String name;
-        int imageView;
+import android.widget.ImageView;
 
-    public Settings(String name, int imageView) {
+public class Settings {
+
+        Integer idSetting;
+        String name;
+        ImageView img;
+
+
+    public Settings(Integer idSetting, String name, ImageView img) {
+        this.idSetting = idSetting;
         this.name = name;
-        this.imageView = imageView;
+        this.img = img;
     }
 
     public Settings() {
+    }
+
+    public Integer getIdSetting() {
+        return idSetting;
+    }
+
+    public void setIdSetting(Integer idSetting) {
+        this.idSetting = idSetting;
     }
 
     public String getName() {
@@ -20,11 +34,11 @@ public class Settings {
         this.name = name;
     }
 
-    public int getImageView() {
-        return imageView;
+    public ImageView getImg() {
+        return img;
     }
 
-    public void setImageView(int imageView) {
-        this.imageView = imageView;
+    public void setImg(ImageView img) {
+        this.img = img;
     }
 }

@@ -11,6 +11,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp" />
     <TextView
+        android:gravity="center"
         android:id="@+id/view_name"
         android:layout_toRightOf="@+id/view_image"
         android:layout_marginLeft="10dp"

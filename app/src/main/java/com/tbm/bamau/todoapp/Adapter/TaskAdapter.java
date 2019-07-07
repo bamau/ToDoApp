@@ -1,35 +1,33 @@
 package com.tbm.bamau.todoapp.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tbm.bamau.todoapp.Models.Settings;
+import com.tbm.bamau.todoapp.Models.Task;
 import com.tbm.bamau.todoapp.R;
-import com.tbm.bamau.todoapp.SettingActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class SettingAdapter extends BaseAdapter {
+public class TaskAdapter extends BaseAdapter {
 
     private Context context;
     private int layout;
-    private List<Settings> settingsList;
+    private List<Task> taskList;
 
-    public SettingAdapter(Context context, int layout, List<Settings> settingsList) {
+    public TaskAdapter(Context context, int layout, List<Task> taskList) {
         this.context = context;
         this.layout = layout;
-        this.settingsList = settingsList;
+        this.taskList = taskList;
     }
 
     @Override
     public int getCount() {
-        return settingsList.size();
+        return taskList.size();
     }
 
     @Override
@@ -43,31 +41,26 @@ public class SettingAdapter extends BaseAdapter {
     }
 
     private class ViewHolder{
-
-        TextView view_name;
-        ImageView img;
+        TextView txt_name, txt_datetime;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        if(convertView==null){
+        if (convertView == null){
             holder = new ViewHolder();
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-            convertView=inflater.inflate(layout, null);
-
-            holder.img = (ImageView) convertView.findViewById(R.id.view_image);
-            holder.view_name = (TextView) convertView.findViewById(R.id.view_name);
-
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(layout,null);
+            holder.txt_datetime  = (TextView) convertView.findViewById(R.id.id_datetime);
+            holder.txt_name      = (TextView) convertView.findViewById(R.id.id_name);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Settings settings = settingsList.get(position);
-        holder.view_name.setText(settings.getName());
-
-
+        Task task = taskList.get(position);
+        holder.txt_name.setText(task.getNameTask());
+        holder.txt_datetime.setText(task.getDatetimeTask());
         return convertView;
     }
 }

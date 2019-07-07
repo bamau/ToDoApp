@@ -18,7 +18,7 @@ import java.util.List;
 
 public class SettingActivity extends AppCompatActivity {
 
-    private List<Settings> settingsList;
+    private ArrayList<Settings> settingsList;
     ListView listView;
     SettingAdapter adapter;
 
@@ -34,16 +34,22 @@ public class SettingActivity extends AppCompatActivity {
 
 
         listView = findViewById(R.id.view_setting);
-        settingsList = new ArrayList<>();
+        settingsList = new ArrayList<Settings>();
         adapter = new SettingAdapter(this, R.layout.item_setting, settingsList);
         listView.setAdapter(adapter);
 
-        Settings settings = new Settings();
-        settings.setName("Change Language");
-       // settings.setImageView(R.drawable.ic_language_black_24dp);
+        settingsList.add(new Settings(0,"Change Language",null));
+        settingsList.add(new Settings(1,"Change Theme",null));
+        settingsList.add(new Settings(2,"Rate Application",null));
 
-        settingsList.add(settings);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.settings, menu);
+        return true;
     }
 
     @Override

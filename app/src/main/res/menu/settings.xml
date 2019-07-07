@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+        <item
+            android:id="@+id/change_language"
+            android:icon="@drawable/ic_language_black_24dp"
+            android:title="@string/change_language" />
+        <item
+            android:id="@+id/change_theme"
+            android:icon="@drawable/ic_theme_black_24dp"
+            android:title="@string/change_theme" />
+        <item
+            android:id="@+id/rate_application"
+            android:icon="@drawable/ic_star_black_24dp"
+            android:title="@string/rate_application" />
+
+</menu>

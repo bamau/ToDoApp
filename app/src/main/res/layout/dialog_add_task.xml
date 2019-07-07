@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="#C9C9C9">
+
+    <TextView
+        android:id="@+id/addTask"
+        android:gravity="center"
+        android:text="Add new task"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="#0C25FA"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <EditText
+        android:hint="Enter name task..."
+        android:layout_marginTop="10dp"
+        android:id="@+id/edit_text_nameTask"
+        android:layout_below="@+id/addTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/edit_text_nameTask"
+        android:id="@+id/btn_add"
+        android:textStyle="bold"
+        android:text="ADD"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/edit_text_nameTask"
+        android:layout_toRightOf="@+id/btn_add"
+        android:id="@+id/btn_cancel"
+        android:textStyle="bold"
+        android:text="CANCEL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>
