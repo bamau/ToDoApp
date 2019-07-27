@@ -1,7 +1,6 @@
 package com.tbm.bamau.todoapp.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,27 +8,27 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tbm.bamau.todoapp.Models.AddTask;
 import com.tbm.bamau.todoapp.Models.Settings;
 import com.tbm.bamau.todoapp.R;
-import com.tbm.bamau.todoapp.SettingActivity;
 
 import java.util.List;
 
-public class SettingAdapter extends BaseAdapter {
+public class AddTaskAdapter extends BaseAdapter {
 
     private Context context;
     private int layout;
-    private List<Settings> settingsList;
+    private List<AddTask> addTaskList;
 
-    public SettingAdapter(Context context, int layout, List<Settings> settingsList) {
+    public AddTaskAdapter(Context context, int layout, List<AddTask> addTaskList) {
         this.context = context;
         this.layout = layout;
-        this.settingsList = settingsList;
+        this.addTaskList = addTaskList;
     }
 
     @Override
     public int getCount() {
-        return settingsList.size();
+        return addTaskList.size();
     }
 
     @Override
@@ -44,7 +43,7 @@ public class SettingAdapter extends BaseAdapter {
 
     private class ViewHolder{
 
-        TextView view_name;
+        TextView view_name_1, view_name_2;
         ImageView img;
     }
 
@@ -57,17 +56,18 @@ public class SettingAdapter extends BaseAdapter {
             convertView=inflater.inflate(layout, null);
 
             holder.img = (ImageView) convertView.findViewById(R.id.view_image);
-            holder.view_name = (TextView) convertView.findViewById(R.id.view_name);
+            holder.view_name_1 = (TextView) convertView.findViewById(R.id.view_name_1);
+            holder.view_name_2 = (TextView) convertView.findViewById(R.id.view_name_2);
 
             convertView.setTag(holder);
         }else{
-            holder = (ViewHolder) convertView.getTag();
+            holder = (AddTaskAdapter.ViewHolder) convertView.getTag();
         }
 
-        Settings settings = settingsList.get(position);
-        holder.view_name.setText(settings.getName());
-        holder.img.setImageResource(settings.getImg());
-
+        AddTask addTask = addTaskList.get(position);
+        holder.view_name_1.setText(addTask.getName1());
+        holder.view_name_2.setText(addTask.getName2());
+        holder.img.setImageResource(addTask.getImg());
 
         return convertView;
     }

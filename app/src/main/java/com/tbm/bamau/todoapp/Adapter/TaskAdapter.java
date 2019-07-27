@@ -1,19 +1,22 @@
 package com.tbm.bamau.todoapp.Adapter;
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.tbm.bamau.todoapp.MainActivity;
 import com.tbm.bamau.todoapp.Models.Task;
 import com.tbm.bamau.todoapp.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TaskAdapter extends BaseAdapter {
+
 
     private Context context;
     private int layout;
@@ -24,6 +27,7 @@ public class TaskAdapter extends BaseAdapter {
         this.layout = layout;
         this.taskList = taskList;
     }
+
 
     @Override
     public int getCount() {
@@ -61,6 +65,7 @@ public class TaskAdapter extends BaseAdapter {
         Task task = taskList.get(position);
         holder.txt_name.setText(task.getNameTask());
         holder.txt_datetime.setText(task.getDatetimeTask());
+
         return convertView;
     }
 }

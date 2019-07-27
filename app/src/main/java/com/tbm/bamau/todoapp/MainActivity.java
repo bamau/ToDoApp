@@ -1,9 +1,16 @@
 package com.tbm.bamau.todoapp;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,14 +19,23 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.tbm.bamau.todoapp.Adapter.TaskAdapter;
+import com.tbm.bamau.todoapp.Fragment.ViewDay_Fragment;
+import com.tbm.bamau.todoapp.Fragment.ViewMonth_Fragment;
+import com.tbm.bamau.todoapp.Fragment.ViewWeek_Fragment;
 import com.tbm.bamau.todoapp.Models.Task;
 
 import java.util.ArrayList;
@@ -27,44 +43,60 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-
-    Database database;
-    ListView listTask;
-    ArrayList<Task> arrayList;
-    TaskAdapter adapter;
-
+    DbHelper database;
+    FloatingActionButton floatingActionButton;
     private DrawerLayout drawer;
     private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        listTask = (ListView) findViewById(R.id.id_listView);
-        arrayList = new ArrayList<>();
-        adapter = new TaskAdapter(this,R.layout.item_task, arrayList);
-        listTask.setAdapter(adapter);
-
-        // tao database
-        database = new Database(this, "todoapp.sqlite",null,1);
-        //tao bang
-        database.QueryData("CREATE TABLE IF NOT EXISTS Task(Id INTEGER PRIMARY KEY AUTOINCREMENT, NameTask VARCHAR(200))");
-        // insert data
-       // database.QueryData("INSERT INTO Task VALUES (null, 'Tối nay đá banh')");
+        database = new DbHelper(this);        AnhXa();
 
 
-        GetDataTasks();
-
-
-        toolbar = findViewById(R.id.toolbar);
+//        listTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                Task task = arrayList.get(position);
+//                int idTask = task.getIdTask();
+//                Intent intent = new Intent(MainActivity.this, UpdateTaskActivity.class);
+//                intent.putExtra("ID",idTask);
+//                Toast.makeText(MainActivity.this, "Bam vao vi tri = '"+position+"'", Toast.LENGTH_SHORT).show();
+//                startActivity(intent);
+//
+//            }
+//        });
         setSupportActionBar(toolbar);
-        drawer = findViewById(R.id.drawer_layout);
+        getSupportActionBar().setTitle("Day");
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddNewTaskActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        if(savedInstanceState == null){
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new ViewDay_Fragment()).commit();
+            navigationView.setCheckedItem(R.id.nav_day);
+        }
+
+    }
+
+    public void AnhXa(){
+        floatingActionButton = findViewById(R.id.fab);
+        toolbar = findViewById(R.id.toolbar);
+        drawer = findViewById(R.id.drawer_layout);
     }
 
     @Override
@@ -80,71 +112,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.navigation_drawer, menu);
+        getMenuInflater().inflate(R.menu.settings, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            DialogAdd();
+        if (id == R.id.view_setting) {
+            Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+            startActivity(intent);
         }
-
         return super.onOptionsItemSelected(item);
     }
 
-    private void GetDataTasks(){
-        // get data
-        Cursor dataTask = database.GetData("SELECT * FROM Task");
-        arrayList.clear();
-        while (dataTask.moveToNext()){
-            String name = dataTask.getString(1);
-            int id = dataTask.getInt(0);
-            arrayList.add(new Task(id,name,null));
-        }
-        adapter.notifyDataSetChanged();
-    }
-
-    private void DialogAdd(){
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_add_task);
-
-        final EditText edtName = (EditText) dialog.findViewById(R.id.edit_text_nameTask);
-        Button btnAdd = (Button) dialog.findViewById(R.id.btn_add);
-        Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
-
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String nameTask = edtName.getText().toString();
-                if(nameTask.equals("")){
-                    Toast.makeText(MainActivity.this,"Please enter characters!",Toast.LENGTH_SHORT).show();
-                }else{
-                    database.QueryData("INSERT INTO Task VALUES (null, '"+nameTask+"')");
-                    Toast.makeText(MainActivity.this, "Add success!", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                    GetDataTasks();
-                }
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-    }
+//    private void GetDataTasks(){
+//        // get data
+//        Cursor dataTask = database.GetData("SELECT * FROM Task");
+//        arrayList.clear();
+//        while (dataTask.moveToNext()){
+//            String name = dataTask.getString(1);
+//            int id = dataTask.getInt(0);
+//            arrayList.add(new Task(id,name,null));
+//        }
+//     //   adapter.notifyDataSetChanged();
+//    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -152,25 +144,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_work) {
-            Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_home) {
-
-        } else if (id == R.id.nav_add_new_list) {
-
+        if (id == R.id.nav_day) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new ViewDay_Fragment()).commit();
+            getSupportActionBar().setTitle("Day");
+        } else if (id == R.id.nav_week) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new ViewWeek_Fragment()).commit();
+            getSupportActionBar().setTitle("Week");
+        } else if (id == R.id.nav_month) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new ViewMonth_Fragment()).commit();
+            getSupportActionBar().setTitle("Month");
         } else if (id == R.id.nav_done_tasks) {
-
-        } else if (id == R.id.nav_later_tasks) {
-
+            Toast.makeText(this, "Done Task", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_setting) {
             Intent intent = new Intent(MainActivity.this, SettingActivity.class);
             startActivity(intent);
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
 }

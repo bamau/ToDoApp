@@ -2,28 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_work"
+            android:id="@+id/nav_day"
             android:icon="@drawable/ic_work"
-            android:title="@string/menu_work" />
+            android:title="Day" />
         <item
-            android:id="@+id/nav_home"
+            android:id="@+id/nav_week"
             android:icon="@drawable/ic_work"
-            android:title="@string/menu_home" />
+            android:title="Week"/>
         <item
-            android:id="@+id/nav_add_new_list"
-            android:icon="@drawable/ic_add_new_list"
-            android:title="@string/add_new_list" />
+            android:id="@+id/nav_month"
+            android:icon="@drawable/ic_work"
+            android:title="Month" />
         <item
             android:id="@+id/nav_done_tasks"
             android:icon="@drawable/ic_done_tasks"
             android:title="Done Tasks" />
-        <item
-            android:id="@+id/nav_later_tasks"
-            android:icon="@drawable/ic_done_tasks"
-            android:title="Later Tasks" />
 
     </group>
 

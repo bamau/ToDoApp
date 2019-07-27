@@ -4,16 +4,8 @@
     tools:showIn="navigation_view">
 
         <item
-            android:id="@+id/change_language"
-            android:icon="@drawable/ic_language_black_24dp"
-            android:title="@string/change_language" />
-        <item
-            android:id="@+id/change_theme"
-            android:icon="@drawable/ic_theme_black_24dp"
-            android:title="@string/change_theme" />
-        <item
-            android:id="@+id/rate_application"
-            android:icon="@drawable/ic_star_black_24dp"
-            android:title="@string/rate_application" />
+            android:id="@+id/view_setting"
+            android:title="Setting" />
+
 
 </menu>

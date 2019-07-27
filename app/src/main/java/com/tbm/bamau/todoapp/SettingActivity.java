@@ -38,18 +38,11 @@ public class SettingActivity extends AppCompatActivity {
         adapter = new SettingAdapter(this, R.layout.item_setting, settingsList);
         listView.setAdapter(adapter);
 
-        settingsList.add(new Settings(0,"Change Language",null));
-        settingsList.add(new Settings(1,"Change Theme",null));
-        settingsList.add(new Settings(2,"Rate Application",null));
+        settingsList.add(new Settings(0,"Change Language",R.drawable.ic_language_black_24dp));
+        settingsList.add(new Settings(1,"Change Theme",R.drawable.ic_theme_black_24dp));
+        settingsList.add(new Settings(2,"Rate Application",R.drawable.ic_star_black_24dp));
 
         adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.settings, menu);
-        return true;
     }
 
     @Override

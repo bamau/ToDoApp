@@ -5,13 +5,18 @@ public class Task {
     private String NameTask;
     private String DatetimeTask;
 
-    public Task(int idTask, String nameTask, String datetimeTask) {
-        IdTask = idTask;
+    public Task() {
+    }
+
+    public Task(String nameTask, String datetimeTask) {
         NameTask = nameTask;
         DatetimeTask = datetimeTask;
     }
 
-    public Task() {
+    public Task(Integer idTask, String nameTask, String datetimeTask) {
+        IdTask = idTask;
+        NameTask = nameTask;
+        DatetimeTask = datetimeTask;
     }
 
     public int getIdTask() {
