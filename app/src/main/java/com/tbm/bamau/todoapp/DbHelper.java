@@ -22,8 +22,17 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "todoapp";
     private static final String TASKTABLE = "Task";
     private static final String TASK_ID = "Id";
+    private static final String TASK_STATUS = "Status";
     private static final String NAME_TASK = "NameTask";
-    private static final String DATE_TIME_TASK = "DateTime";
+    private static final String TIME_TASK = "TimeTask";
+    private static final String DAY_TASK = "DayTask";
+    private static final String MONTH_TASK = "MonthTask";
+    private static final String YEAR_TASK = "YearTask";
+    private static final String REPEAT_TASK = "RepeatTask";
+    private static final String TIME_REMINDER = "TimeReminder";
+    private static final String NOTE_TASK = "NoteTask";
+    private static final String LINK_IMAGE = "LinkImage";
+    private static final String LINK_AUDIO = "LinkAudio";
 
     private Context context;
 
@@ -31,13 +40,23 @@ public class DbHelper extends SQLiteOpenHelper {
         super(context,DB_NAME,null,DB_VERSION);
     }
 
+
     @Override
     public void onCreate(SQLiteDatabase db) {
 
         String CREATE_TASKTABLE = "CREATE TABLE " + TASKTABLE + "("
                 + TASK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + TASK_STATUS + " INTERGER,"
                 + NAME_TASK + " TEXT,"
-                + DATE_TIME_TASK + " TEXT" + ")";
+                + TIME_TASK + " TEXT,"
+                + DAY_TASK + " TEXT,"
+                + MONTH_TASK + " TEXT,"
+                + YEAR_TASK + " TEXT,"
+                + REPEAT_TASK + " TEXT,"
+                + TIME_REMINDER + " TEXT,"
+                + NOTE_TASK + " TEXT,"
+                + LINK_IMAGE + " TEXT,"
+                + LINK_AUDIO + " TEXT" + ")";
 
         db.execSQL(CREATE_TASKTABLE);
     }
@@ -60,9 +79,17 @@ public class DbHelper extends SQLiteOpenHelper {
     public void addTask(Task task){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(TASK_STATUS, task.getStatusTask());
         values.put(NAME_TASK, task.getNameTask());
-        values.put(DATE_TIME_TASK, task.getDatetimeTask());
-
+        values.put(TIME_TASK, task.getTimeTask());
+        values.put(DAY_TASK, task.getDayTask());
+        values.put(MONTH_TASK, task.getMonthTask());
+        values.put(YEAR_TASK, task.getYearTask());
+        values.put(REPEAT_TASK, task.getRepeat());
+        values.put(TIME_REMINDER, task.getTimeReminder());
+        values.put(NOTE_TASK, task.getNote());
+        values.put(LINK_IMAGE, task.getLinkImage());
+        values.put(LINK_AUDIO, task.getLinkAudio());
         //Neu de null thi khi value bang null thi loi
         db.insert(TASKTABLE,null,values);
         db.close();
@@ -75,13 +102,16 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public Task getTaskById(int id){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TASKTABLE, new String[] { TASK_ID,
-                        NAME_TASK, DATE_TIME_TASK}, TASK_ID + "=?",
+        Cursor cursor = db.query(TASKTABLE, new String[] { TASK_ID, TASK_STATUS,
+                        NAME_TASK, TIME_TASK, DAY_TASK, MONTH_TASK, YEAR_TASK, REPEAT_TASK,
+                TIME_REMINDER, NOTE_TASK, LINK_IMAGE, LINK_AUDIO}, TASK_ID + "=?",
                 new String[] { String.valueOf(id) },null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        Task task = new Task(cursor.getInt(0),cursor.getString(1),cursor.getString(2));
+        Task task = new Task(cursor.getInt(0),cursor.getInt(1),cursor.getString(2), cursor.getString(3),
+                cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7),
+                cursor.getString(8), cursor.getString(9), cursor.getString(10), cursor.getString(11));
         cursor.close();
         db.close();
         return task;
@@ -95,13 +125,22 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(NAME_TASK,task.getNameTask());
+        values.put(TASK_STATUS, task.getStatusTask());
+        values.put(NAME_TASK, task.getNameTask());
+        values.put(TIME_TASK, task.getTimeTask());
+        values.put(DAY_TASK, task.getDayTask());
+        values.put(MONTH_TASK, task.getMonthTask());
+        values.put(YEAR_TASK, task.getYearTask());
+        values.put(REPEAT_TASK, task.getRepeat());
+        values.put(TIME_REMINDER, task.getTimeReminder());
+        values.put(NOTE_TASK, task.getNote());
+        values.put(LINK_IMAGE, task.getLinkImage());
+        values.put(LINK_AUDIO, task.getLinkAudio());
 
         return db.update(TASKTABLE,values,TASK_ID +"=?",new String[] { String.valueOf(task.getIdTask())});
 
 
     }
-
     /*
      Getting All Task
       */
@@ -117,8 +156,17 @@ public class DbHelper extends SQLiteOpenHelper {
             do {
                 Task task = new Task();
                 task.setIdTask(cursor.getInt(0));
-                task.setNameTask(cursor.getString(1));
-                task.setDatetimeTask(cursor.getString(2));
+                task.setStatusTask(cursor.getInt(1));
+                task.setNameTask(cursor.getString(2));
+                task.setTimeTask(cursor.getString(3));
+                task.setDayTask(cursor.getString(4));
+                task.setMonthTask(cursor.getString(5));
+                task.setYearTask(cursor.getString(6));
+                task.setRepeat(cursor.getString(7));
+                task.setTimeReminder(cursor.getString(8));
+                task.setNote(cursor.getString(9));
+                task.setLinkImage(cursor.getString(10));
+                task.setLinkAudio(cursor.getString(11));
                 listTask.add(task);
             } while (cursor.moveToNext());
         }

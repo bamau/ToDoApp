@@ -1,5 +1,6 @@
 package com.tbm.bamau.todoapp;
 
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -67,11 +68,21 @@ public class AddNewTaskActivity extends AppCompatActivity {
                     case 1:
 
                         break;
+                    case 2:
+                        dialogAddNote();
+                        break;
 
                 }
             }
         });
 
+    }
+
+    private void dialogAddNote() {
+
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_add_task);
+        dialog.show();
     }
 
     @Override
@@ -83,8 +94,8 @@ public class AddNewTaskActivity extends AppCompatActivity {
 
     public Task createTask() {
         String name = edtName.getText().toString();
-        //String date_time = "";
-        Task task = new Task(name,"null");
+
+        Task task = new Task(0,name,null,null,null,null,null,null,null,null,null);
         return task;
     }
 

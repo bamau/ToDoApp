@@ -7,19 +7,36 @@
     android:paddingLeft="16dp">
 
     <TextView
+        android:layout_marginTop="10dp"
         android:textSize="20sp"
-        android:id="@+id/id_datetime"
-        android:text="Date Time"
+        android:id="@+id/id_time"
+        android:text="Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/imageTask"
+        android:layout_toRightOf="@+id/id_time"
+        android:layout_marginLeft="10dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/ic_launcher"/>
+    <TextView
+        android:textSize="20sp"
+        android:id="@+id/id_note"
+        android:text="Note"
+        android:layout_toRightOf="@+id/imageTask"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@+id/id_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
         android:textSize="20sp"
         android:id="@+id/id_name"
         android:text="Name Task"
-        android:layout_toRightOf="@+id/id_datetime"
+        android:layout_toRightOf="@+id/imageTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"/>
+        android:layout_marginLeft="10dp"/>
 
 
 </RelativeLayout>

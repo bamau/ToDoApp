@@ -2,21 +2,48 @@ package com.tbm.bamau.todoapp.Models;
 
 public class Task {
     private int IdTask;
+    private int StatusTask;
     private String NameTask;
-    private String DatetimeTask;
+    private String TimeTask;
+    private String DayTask;
+    private String MonthTask;
+    private String YearTask;
+    private String Repeat;
+    private String TimeReminder;
+    private String Note;
+    private String LinkImage;
+    private String LinkAudio;
 
     public Task() {
     }
 
-    public Task(String nameTask, String datetimeTask) {
+    public Task(int statusTask, String nameTask, String timeTask, String dayTask, String monthTask, String yearTask, String repeat, String timeReminder, String note, String linkImage, String linkAudio) {
+        StatusTask = statusTask;
         NameTask = nameTask;
-        DatetimeTask = datetimeTask;
+        TimeTask = timeTask;
+        DayTask = dayTask;
+        MonthTask = monthTask;
+        YearTask = yearTask;
+        Repeat = repeat;
+        TimeReminder = timeReminder;
+        Note = note;
+        LinkImage = linkImage;
+        LinkAudio = linkAudio;
     }
 
-    public Task(Integer idTask, String nameTask, String datetimeTask) {
+    public Task(int idTask, int statusTask, String nameTask, String timeTask, String dayTask, String monthTask, String yearTask, String repeat, String timeReminder, String note, String linkImage, String linkAudio) {
         IdTask = idTask;
+        StatusTask = statusTask;
         NameTask = nameTask;
-        DatetimeTask = datetimeTask;
+        TimeTask = timeTask;
+        DayTask = dayTask;
+        MonthTask = monthTask;
+        YearTask = yearTask;
+        Repeat = repeat;
+        TimeReminder = timeReminder;
+        Note = note;
+        LinkImage = linkImage;
+        LinkAudio = linkAudio;
     }
 
     public int getIdTask() {
@@ -27,6 +54,14 @@ public class Task {
         IdTask = idTask;
     }
 
+    public int getStatusTask() {
+        return StatusTask;
+    }
+
+    public void setStatusTask(int statusTask) {
+        StatusTask = statusTask;
+    }
+
     public String getNameTask() {
         return NameTask;
     }
@@ -35,11 +70,75 @@ public class Task {
         NameTask = nameTask;
     }
 
-    public String getDatetimeTask() {
-        return DatetimeTask;
+    public String getTimeTask() {
+        return TimeTask;
     }
 
-    public void setDatetimeTask(String datetimeTask) {
-        DatetimeTask = datetimeTask;
+    public void setTimeTask(String timeTask) {
+        TimeTask = timeTask;
+    }
+
+    public String getDayTask() {
+        return DayTask;
+    }
+
+    public void setDayTask(String dayTask) {
+        DayTask = dayTask;
+    }
+
+    public String getMonthTask() {
+        return MonthTask;
+    }
+
+    public void setMonthTask(String monthTask) {
+        MonthTask = monthTask;
+    }
+
+    public String getYearTask() {
+        return YearTask;
+    }
+
+    public void setYearTask(String yearTask) {
+        YearTask = yearTask;
+    }
+
+    public String getRepeat() {
+        return Repeat;
+    }
+
+    public void setRepeat(String repeat) {
+        Repeat = repeat;
+    }
+
+    public String getTimeReminder() {
+        return TimeReminder;
+    }
+
+    public void setTimeReminder(String timeReminder) {
+        TimeReminder = timeReminder;
+    }
+
+    public String getNote() {
+        return Note;
+    }
+
+    public void setNote(String note) {
+        Note = note;
+    }
+
+    public String getLinkImage() {
+        return LinkImage;
+    }
+
+    public void setLinkImage(String linkImage) {
+        LinkImage = linkImage;
+    }
+
+    public String getLinkAudio() {
+        return LinkAudio;
+    }
+
+    public void setLinkAudio(String linkAudio) {
+        LinkAudio = linkAudio;
     }
 }

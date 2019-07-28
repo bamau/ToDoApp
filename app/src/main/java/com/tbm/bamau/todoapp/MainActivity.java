@@ -43,6 +43,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+
     DbHelper database;
     FloatingActionButton floatingActionButton;
     private DrawerLayout drawer;
@@ -52,7 +53,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        database = new DbHelper(this);        AnhXa();
+
+        database = new DbHelper(this);
+        AnhXa();
 
 
 //        listTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.baoyz.swipemenulistview.SwipeMenuListView;
@@ -45,7 +46,8 @@ public class TaskAdapter extends BaseAdapter {
     }
 
     private class ViewHolder{
-        TextView txt_name, txt_datetime;
+        TextView txt_name ,txt_time, txt_note;
+        ImageView imageView;
     }
 
     @Override
@@ -55,8 +57,10 @@ public class TaskAdapter extends BaseAdapter {
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(layout,null);
-            holder.txt_datetime  = (TextView) convertView.findViewById(R.id.id_datetime);
-            holder.txt_name      = (TextView) convertView.findViewById(R.id.id_name);
+            holder.txt_time  = (TextView) convertView.findViewById(R.id.id_time);
+            holder.txt_name  = (TextView) convertView.findViewById(R.id.id_name);
+            holder.txt_note  = (TextView) convertView.findViewById(R.id.id_note);
+            holder.imageView  = (ImageView) convertView.findViewById(R.id.imageTask);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
@@ -64,7 +68,9 @@ public class TaskAdapter extends BaseAdapter {
 
         Task task = taskList.get(position);
         holder.txt_name.setText(task.getNameTask());
-        holder.txt_datetime.setText(task.getDatetimeTask());
+        holder.txt_time.setText(task.getTimeTask());
+        holder.txt_note.setText(task.getNote());
+
 
         return convertView;
     }
