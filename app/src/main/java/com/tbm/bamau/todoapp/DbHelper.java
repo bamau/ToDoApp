@@ -117,11 +117,28 @@ public class DbHelper extends SQLiteOpenHelper {
         return task;
     }
 
+    public Task getTaskByDay(String day){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TASKTABLE, new String[] { TASK_ID, TASK_STATUS,
+                        NAME_TASK, TIME_TASK, DAY_TASK, MONTH_TASK, YEAR_TASK, REPEAT_TASK,
+                        TIME_REMINDER, NOTE_TASK, LINK_IMAGE, LINK_AUDIO}, DAY_TASK + "=?",
+                new String[] { String.valueOf(day) },null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Task task = new Task(cursor.getInt(0),cursor.getInt(1),cursor.getString(2), cursor.getString(3),
+                cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7),
+                cursor.getString(8), cursor.getString(9), cursor.getString(10), cursor.getString(11));
+        cursor.close();
+        db.close();
+        return task;
+    }
+
     /*
     Update name of Task
      */
 
-    public int Update(Task task){
+    public void Update(Task task){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -136,10 +153,49 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(NOTE_TASK, task.getNote());
         values.put(LINK_IMAGE, task.getLinkImage());
         values.put(LINK_AUDIO, task.getLinkAudio());
+        db.update(TASKTABLE,values,TASK_ID +" = " + task.getIdTask(),null);
+        Log.d(TAG, "'"+task.getIdTask()+"'");
+        Log.d(TAG, "'"+TASK_ID+"'");
+
+        db.close();
+    }
+
+    public int UpdateStatusToLater(Task task){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(TASK_STATUS, 2);
+        values.put(NAME_TASK, task.getNameTask());
+        values.put(TIME_TASK, task.getTimeTask());
+        values.put(DAY_TASK, task.getDayTask());
+        values.put(MONTH_TASK, task.getMonthTask());
+        values.put(YEAR_TASK, task.getYearTask());
+        values.put(REPEAT_TASK, task.getRepeat());
+        values.put(TIME_REMINDER, task.getTimeReminder());
+        values.put(NOTE_TASK, task.getNote());
+        values.put(LINK_IMAGE, task.getLinkImage());
+        values.put(LINK_AUDIO, task.getLinkAudio());
 
         return db.update(TASKTABLE,values,TASK_ID +"=?",new String[] { String.valueOf(task.getIdTask())});
+    }
 
+    public int UpdateStatus(Task task){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
 
+        values.put(TASK_STATUS, 1);
+        values.put(NAME_TASK, task.getNameTask());
+        values.put(TIME_TASK, task.getTimeTask());
+        values.put(DAY_TASK, task.getDayTask());
+        values.put(MONTH_TASK, task.getMonthTask());
+        values.put(YEAR_TASK, task.getYearTask());
+        values.put(REPEAT_TASK, task.getRepeat());
+        values.put(TIME_REMINDER, task.getTimeReminder());
+        values.put(NOTE_TASK, task.getNote());
+        values.put(LINK_IMAGE, task.getLinkImage());
+        values.put(LINK_AUDIO, task.getLinkAudio());
+
+        return db.update(TASKTABLE,values,TASK_ID +"=?",new String[] { String.valueOf(task.getIdTask())});
     }
     /*
      Getting All Task
@@ -174,13 +230,88 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
         return listTask;
     }
+
+    public List<Task> getListTaskWithDay(String day, String month, String year, int status) {
+        List<Task> listTask = new ArrayList<Task>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM ( SELECT * FROM "+TASKTABLE+") WHERE ("+ DAY_TASK +" LIKE '"+day+"%' AND "+MONTH_TASK+" LIKE'"+month+"%' AND "+YEAR_TASK+" LIKE'"+year+"%' AND "+TASK_STATUS+" LIKE'"+status+"%')",null);
+        while (cursor.moveToNext()){
+                Task task = new Task();
+                task.setIdTask(cursor.getInt(0));
+                task.setStatusTask(cursor.getInt(1));
+                task.setNameTask(cursor.getString(2));
+                task.setTimeTask(cursor.getString(3));
+                task.setDayTask(cursor.getString(4));
+                task.setMonthTask(cursor.getString(5));
+                task.setYearTask(cursor.getString(6));
+                task.setRepeat(cursor.getString(7));
+                task.setTimeReminder(cursor.getString(8));
+                task.setNote(cursor.getString(9));
+                task.setLinkImage(cursor.getString(10));
+                task.setLinkAudio(cursor.getString(11));
+                listTask.add(task);
+            }
+        cursor.close();
+        db.close();
+        return listTask;
+    }
+
+    public List<Task> getListTaskWithStatus(int status) {
+        List<Task> listTask = new ArrayList<Task>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM ( SELECT * FROM "+TASKTABLE+") WHERE ("+TASK_STATUS+" LIKE'"+status+"%')",null);
+        while (cursor.moveToNext()){
+            Task task = new Task();
+            task.setIdTask(cursor.getInt(0));
+            task.setStatusTask(cursor.getInt(1));
+            task.setNameTask(cursor.getString(2));
+            task.setTimeTask(cursor.getString(3));
+            task.setDayTask(cursor.getString(4));
+            task.setMonthTask(cursor.getString(5));
+            task.setYearTask(cursor.getString(6));
+            task.setRepeat(cursor.getString(7));
+            task.setTimeReminder(cursor.getString(8));
+            task.setNote(cursor.getString(9));
+            task.setLinkImage(cursor.getString(10));
+            task.setLinkAudio(cursor.getString(11));
+            listTask.add(task);
+        }
+        cursor.close();
+        db.close();
+        return listTask;
+    }
+
+    public List<Task> getListTaskWithLaterDate(int status) {
+        List<Task> listTask = new ArrayList<Task>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM ( SELECT * FROM "+TASKTABLE+") WHERE ("+TASK_STATUS+" LIKE'"+status+"%')",null);
+        while (cursor.moveToNext()){
+            Task task = new Task();
+            task.setIdTask(cursor.getInt(0));
+            task.setStatusTask(cursor.getInt(1));
+            task.setNameTask(cursor.getString(2));
+            task.setTimeTask(cursor.getString(3));
+            task.setDayTask(cursor.getString(4));
+            task.setMonthTask(cursor.getString(5));
+            task.setYearTask(cursor.getString(6));
+            task.setRepeat(cursor.getString(7));
+            task.setTimeReminder(cursor.getString(8));
+            task.setNote(cursor.getString(9));
+            task.setLinkImage(cursor.getString(10));
+            task.setLinkAudio(cursor.getString(11));
+            listTask.add(task);
+        }
+        cursor.close();
+        db.close();
+        return listTask;
+    }
+
     /*
     Delete a Task by ID
      */
     public void deleteTask(Task task) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TASKTABLE, TASK_ID + " = ?",
-                new String[] { String.valueOf(task.getIdTask()) });
+        db.delete(TASKTABLE, TASK_ID + " = ?", new String[] { String.valueOf(task.getIdTask()) });
         db.close();
     }
     /*
@@ -195,5 +326,6 @@ public class DbHelper extends SQLiteOpenHelper {
         // return count
         return cursor.getCount();
     }
+
 }
 

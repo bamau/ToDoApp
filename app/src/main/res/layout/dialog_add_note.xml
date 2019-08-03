@@ -6,35 +6,35 @@
     android:background="#C9C9C9">
 
     <TextView
-        android:id="@+id/addTask"
+        android:id="@+id/addNote"
         android:gravity="center"
-        android:text="Add new task"
+        android:text="Add new note"
         android:textSize="30sp"
         android:textStyle="bold"
         android:textColor="#0C25FA"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
-        android:hint="Enter name task..."
+        android:hint="Enter note..."
         android:layout_marginTop="10dp"
-        android:id="@+id/edit_text_nameTask"
-        android:layout_below="@+id/addTask"
+        android:id="@+id/editNote"
+        android:layout_below="@+id/addNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
         android:layout_marginLeft="50dp"
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/edit_text_nameTask"
-        android:id="@+id/btn_add"
+        android:layout_below="@+id/editNote"
+        android:id="@+id/btn_ok"
         android:textStyle="bold"
-        android:text="ADD"
+        android:text="OK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <Button
         android:layout_marginLeft="50dp"
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/edit_text_nameTask"
-        android:layout_toRightOf="@+id/btn_add"
+        android:layout_below="@+id/editNote"
+        android:layout_toRightOf="@+id/btn_ok"
         android:id="@+id/btn_cancel"
         android:textStyle="bold"
         android:text="CANCEL"

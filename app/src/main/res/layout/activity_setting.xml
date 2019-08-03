@@ -4,16 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".SettingActivity">
 
-    <ListView
-        android:id="@+id/view_setting"
+    <TextView
+        android:id="@+id/changeLanguage"
+        android:text="@string/change_language"
+        android:paddingTop="20dp"
+        android:paddingLeft="20dp"
+        android:drawableLeft="@drawable/ic_language_black_24dp"
+        android:drawablePadding="25dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@android:color/background_light"
-        android:divider="@android:color/white"
-        android:dividerHeight="20dp"></ListView>
-
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/changeTheme"
+        android:text="@string/change_theme"
+        android:paddingLeft="20dp"
+        android:drawableLeft="@drawable/ic_change_theme_black_24dp"
+        android:paddingTop="20dp"
+        android:drawablePadding="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/rateApp"
+        android:text="@string/rate_application"
+        android:paddingLeft="20dp"
+        android:drawableLeft="@drawable/ic_star_black_24dp"
+        android:paddingTop="20dp"
+        android:drawablePadding="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>

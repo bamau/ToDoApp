@@ -1,42 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="16dp"
-    android:paddingLeft="16dp">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
-    <TextView
-        android:layout_marginTop="10dp"
-        android:textSize="20sp"
-        android:id="@+id/id_time"
-        android:text="Time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <ImageView
-        android:id="@+id/imageTask"
-        android:layout_toRightOf="@+id/id_time"
-        android:layout_marginLeft="10dp"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@mipmap/ic_launcher"/>
-    <TextView
-        android:textSize="20sp"
-        android:id="@+id/id_note"
-        android:text="Note"
-        android:layout_toRightOf="@+id/imageTask"
-        android:layout_marginLeft="10dp"
-        android:layout_below="@+id/id_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:textSize="20sp"
-        android:id="@+id/id_name"
-        android:text="Name Task"
-        android:layout_toRightOf="@+id/imageTask"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_weight="4"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_gravity="center"
+                android:id="@+id/imageTask"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_card_membership" />
+
+            <TextView
+                android:id="@+id/id_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="Time"
+                android:textColor="@color/green"
+                android:textSize="10sp" />
+        </FrameLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_marginLeft="5dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"/>
+        android:orientation="vertical">
+        <TextView
+            android:textSize="20sp"
+            android:id="@+id/id_name"
+            android:text="Name Task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:textColor="@color/orange"
+            android:textSize="15sp"
+            android:id="@+id/id_note"
+            android:text="Note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
 
-</RelativeLayout>
+
+</LinearLayout>

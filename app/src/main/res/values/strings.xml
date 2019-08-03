@@ -20,4 +20,19 @@
     <string name="change_language">Change Language</string>
     <string name="change_theme">Change Theme</string>
     <string name="rate_application">Rate Application</string>
+    <string name="due">DUE</string>
+    <string name="reminders">REMINDERS</string>
+    <string name="note">NOTE</string>
+    <string name="set_a_due_date_and_time">Set a due date and time</string>
+    <string name="add_time_or_location_reminders">Add time or location reminders</string>
+    <string name="add_a_note">Add a note</string>
+    <string name="image">IMAGE</string>
+    <string name="audio">AUDIO</string>
+    <string name="take_a_photo_or_choose_an_image">Take a photo or choose an image</string>
+    <string name="record_an_audio_note">Record an audio note</string>
+    <string name="set_time">Set time</string>
+    <string name="set_date">Set date</string>
+    <string name="set_repeat">Set repeat</string>
+    <string name="pick_a_repeat">Pick a repeat</string>
+    <string name="norepeat">No repeat</string>
 </resources>

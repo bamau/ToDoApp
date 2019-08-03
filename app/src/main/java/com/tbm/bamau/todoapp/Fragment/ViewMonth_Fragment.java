@@ -1,6 +1,5 @@
 package com.tbm.bamau.todoapp.Fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,9 +13,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.tbm.bamau.todoapp.Adapter.GridAdapter;
-import com.tbm.bamau.todoapp.Adapter.TaskAdapter;
 import com.tbm.bamau.todoapp.DbHelper;
 import com.tbm.bamau.todoapp.Models.Task;
 import com.tbm.bamau.todoapp.R;
@@ -38,7 +35,6 @@ public class ViewMonth_Fragment extends Fragment {
     GridAdapter gridAdapter;
 
     Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-    Context context;
     SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy",Locale.ENGLISH);
     SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM",Locale.ENGLISH);
     SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy",Locale.ENGLISH);
@@ -54,6 +50,7 @@ public class ViewMonth_Fragment extends Fragment {
         currentDate = view.findViewById(R.id.currentDate);
         gridView = view.findViewById(R.id.gridview);
         database = new DbHelper(getActivity());
+
 
         setUpCalendar();
 
@@ -83,7 +80,10 @@ public class ViewMonth_Fragment extends Fragment {
 
         return view;
     }
-    private void setUpCalendar() {
+    public static ViewMonth_Fragment getInstance(){
+        return new ViewMonth_Fragment();
+    }
+    public void setUpCalendar() {
         String cDate = dateFormat.format(calendar.getTime());
         currentDate.setText(cDate);
         dates.clear();
@@ -96,7 +96,6 @@ public class ViewMonth_Fragment extends Fragment {
             dates.add(monthCalendar.getTime());
             monthCalendar.add(Calendar.DAY_OF_MONTH,1);
         }
-
         gridAdapter = new GridAdapter(getContext(),dates,calendar,taskList);
         gridView.setAdapter(gridAdapter);
     }

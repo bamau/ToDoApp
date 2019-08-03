@@ -7,15 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".AddNewTaskActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:popupTheme="@style/AppTheme.PopupOverlay"/>
-
     <TextView
         android:id="@+id/viewTime"
         android:layout_width="wrap_content"
@@ -44,15 +35,138 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <ScrollView
         android:layout_below="@+id/editText"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="30dp"
-        android:background="@android:color/background_light"
-        android:divider="@android:color/background_light"
-        android:dividerHeight="5dp"></ListView>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:textSize="20sp"
+                android:id="@+id/due"
+                android:text="@string/due"
+                android:paddingTop="20dp"
+                android:paddingLeft="10dp"
+                android:drawableLeft="@drawable/ic_event_black_24dp"
+                android:drawablePadding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="59dp">
+
+                <TextView
+                    android:paddingTop="5dp"
+                    android:id="@+id/setDate"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/set_date" />
+
+                <TextView
+                    android:paddingTop="5dp"
+                    android:id="@+id/setTime"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/set_time"
+                    android:paddingLeft="10dp"/>
+
+            </LinearLayout>
+            <TextView
+                android:paddingTop="5dp"
+                android:id="@+id/setRepeat"
+                android:textSize="15sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/set_repeat"
+                android:paddingLeft="59dp"/>
+            <TextView
+                android:id="@+id/reminders"
+                android:text="@string/reminders"
+                android:textSize="20sp"
+                android:paddingLeft="10dp"
+                android:drawableLeft="@drawable/ic_notifications_black_24dp"
+                android:paddingTop="20dp"
+                android:drawablePadding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:paddingTop="5dp"
+                android:id="@+id/addRemind"
+                android:textSize="15sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_time_or_location_reminders"
+                android:paddingLeft="59dp"/>
+
+            <TextView
+                android:id="@+id/note"
+                android:text="@string/note"
+                android:textSize="20sp"
+                android:paddingLeft="10dp"
+                android:drawableLeft="@drawable/ic_note_black_24dp"
+                android:paddingTop="20dp"
+                android:drawablePadding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:paddingTop="5dp"
+                android:id="@+id/addNote"
+                android:textSize="15sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_a_note"
+                android:paddingLeft="59dp"/>
+
+            <TextView
+                android:textSize="20sp"
+                android:id="@+id/image"
+                android:text="@string/image"
+                android:paddingLeft="10dp"
+                android:drawableLeft="@drawable/ic_theme_black_24dp"
+                android:paddingTop="20dp"
+                android:drawablePadding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:paddingTop="5dp"
+                android:id="@+id/takePhoto"
+                android:textSize="15sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/take_a_photo_or_choose_an_image"
+                android:paddingLeft="59dp"/>
+
+            <TextView
+                android:textSize="20sp"
+                android:id="@+id/audio"
+                android:text="@string/audio"
+                android:paddingLeft="10dp"
+                android:drawableLeft="@drawable/ic_keyboard_voice_black_24dp"
+                android:paddingTop="20dp"
+                android:drawablePadding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:paddingTop="5dp"
+                android:id="@+id/addAudio"
+                android:textSize="15sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/record_an_audio_note"
+                android:paddingLeft="59dp"/>
+
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>

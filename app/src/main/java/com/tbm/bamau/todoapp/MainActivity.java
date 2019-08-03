@@ -11,6 +11,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -25,7 +28,10 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -34,11 +40,17 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.tbm.bamau.todoapp.Adapter.TaskAdapter;
 import com.tbm.bamau.todoapp.Fragment.ViewDay_Fragment;
+import com.tbm.bamau.todoapp.Fragment.ViewDoneTask_Fragment;
+import com.tbm.bamau.todoapp.Fragment.ViewLaterTask_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewMonth_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewWeek_Fragment;
 import com.tbm.bamau.todoapp.Models.Task;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -47,32 +59,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DbHelper database;
     FloatingActionButton floatingActionButton;
     private DrawerLayout drawer;
-    private Toolbar toolbar;
+    Toolbar toolbar;
+
+    ViewDay_Fragment viewDay_fragment = new ViewDay_Fragment();
+    ViewWeek_Fragment viewWeek_fragment = new ViewWeek_Fragment();
+    ViewMonth_Fragment viewMonth_fragment = new ViewMonth_Fragment();
+    ViewDoneTask_Fragment viewDoneTask_fragment = new ViewDoneTask_Fragment();
+    ViewLaterTask_Fragment viewLaterTask_fragment = new ViewLaterTask_Fragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         database = new DbHelper(this);
-        AnhXa();
-
-
-//        listTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                Task task = arrayList.get(position);
-//                int idTask = task.getIdTask();
-//                Intent intent = new Intent(MainActivity.this, UpdateTaskActivity.class);
-//                intent.putExtra("ID",idTask);
-//                Toast.makeText(MainActivity.this, "Bam vao vi tri = '"+position+"'", Toast.LENGTH_SHORT).show();
-//                startActivity(intent);
-//
-//            }
-//        });
+        Initialization();
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Day");
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -90,13 +93,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new ViewDay_Fragment()).commit();
+                    viewDay_fragment).commit();
             navigationView.setCheckedItem(R.id.nav_day);
         }
 
     }
 
-    public void AnhXa(){
+    public static MainActivity getInstance(){
+        return new MainActivity();
+    }
+
+
+    public void Initialization(){
         floatingActionButton = findViewById(R.id.fab);
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -129,18 +137,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
-//    private void GetDataTasks(){
-//        // get data
-//        Cursor dataTask = database.GetData("SELECT * FROM Task");
-//        arrayList.clear();
-//        while (dataTask.moveToNext()){
-//            String name = dataTask.getString(1);
-//            int id = dataTask.getInt(0);
-//            arrayList.add(new Task(id,name,null));
-//        }
-//     //   adapter.notifyDataSetChanged();
-//    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -149,21 +145,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_day) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new ViewDay_Fragment()).commit();
+                    viewDay_fragment).commit();
             getSupportActionBar().setTitle("Day");
         } else if (id == R.id.nav_week) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new ViewWeek_Fragment()).commit();
+                    viewWeek_fragment).commit();
             getSupportActionBar().setTitle("Week");
         } else if (id == R.id.nav_month) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new ViewMonth_Fragment()).commit();
+                    viewMonth_fragment).commit();
             getSupportActionBar().setTitle("Month");
         } else if (id == R.id.nav_done_tasks) {
-            Toast.makeText(this, "Done Task", Toast.LENGTH_SHORT).show();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    viewDoneTask_fragment).commit();
+            getSupportActionBar().setTitle("Done Task");
         } else if (id == R.id.nav_setting) {
             Intent intent = new Intent(MainActivity.this, SettingActivity.class);
             startActivity(intent);
+        } else if (id == R.id.nav_later_tasks) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    viewLaterTask_fragment).commit();
+            getSupportActionBar().setTitle("Later Task");
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
