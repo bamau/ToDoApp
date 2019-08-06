@@ -53,7 +53,8 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        ViewMonth_Fragment.OnMessageReadListenerMonth, ViewDay_Fragment.OnMessageReadListenerDay {
 
 
     DbHelper database;
@@ -98,11 +99,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
     }
-
-    public static MainActivity getInstance(){
-        return new MainActivity();
-    }
-
 
     public void Initialization(){
         floatingActionButton = findViewById(R.id.fab);
@@ -172,5 +168,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    public void onMessageReadDay(CharSequence input) {
 
+    }
+
+    @Override
+    public void onMessageReadMonth(CharSequence input) {
+        Bundle bundle = new Bundle();
+        bundle.putString("CHANGE_DATE", (String) input);
+        viewDay_fragment.setArguments(bundle);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,viewDay_fragment).commit();
+    }
 }

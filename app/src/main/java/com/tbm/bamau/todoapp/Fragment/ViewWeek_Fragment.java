@@ -1,23 +1,17 @@
 package com.tbm.bamau.todoapp.Fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.tbm.bamau.todoapp.Adapter.GridAdapter;
-import com.tbm.bamau.todoapp.Adapter.TaskAdapter;
+import com.tbm.bamau.todoapp.Adapter.GridAdapterMonth;
 import com.tbm.bamau.todoapp.DbHelper;
 import com.tbm.bamau.todoapp.Models.Task;
 import com.tbm.bamau.todoapp.R;
@@ -29,15 +23,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static android.support.constraint.motion.MotionScene.TAG;
-
 public class ViewWeek_Fragment extends Fragment {
 
+    private static final int MAX_ROWS = 168;
     ImageButton nextButton, previousButton;
     TextView currentDate, weekDate, sun, mon, tue, wed, thu, fri, sat;
     GridView gridView;
     DbHelper database;
-    GridAdapter gridAdapter;
+    GridAdapterMonth gridAdapter;
 
     Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
 
@@ -97,8 +90,23 @@ public class ViewWeek_Fragment extends Fragment {
         calendar.add(Calendar.DATE, +6);
         String wDate = dateFormat.format(calendar.getTime());
         weekDate.setText(wDate);
+        // test
+        dates.clear();
+        Calendar weekCalendar = (Calendar) calendar.clone();
+        weekCalendar.set(Calendar.DAY_OF_WEEK,1);
+        int FirstDayOfWeek = weekCalendar.get(Calendar.DATE)-1;
+        weekCalendar.add(Calendar.DAY_OF_WEEK, -FirstDayOfWeek);
+
+        while (dates.size() < MAX_ROWS){
+            dates.add(weekCalendar.getTime());
+            weekCalendar.add(Calendar.DAY_OF_MONTH,1);
+        }
+        gridAdapter = new GridAdapterMonth(getContext(),dates,calendar,taskList);
+        gridView.setAdapter(gridAdapter);
 
     }
+
+
 
     private void setUpDayOfWeek(View view){
         int findview[]={R.id.sun, R.id.mon, R.id.tue, R.id.wed, R.id.thu, R.id.fri, R.id.sat};

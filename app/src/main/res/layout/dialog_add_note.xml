@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    android:background="#C9C9C9">
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/addNote"
@@ -11,7 +11,7 @@
         android:text="Add new note"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:textColor="#0C25FA"
+        android:textColor="@color/blue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText

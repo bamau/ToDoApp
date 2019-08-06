@@ -92,7 +92,7 @@ public class AddNewTaskActivity extends AppCompatActivity {
                 Calendar calendar = Calendar.getInstance();
                 int hours = calendar.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar.get(Calendar.MINUTE);
-                timePickerDialog = new TimePickerDialog(setTime.getContext(), R.style.Theme_AppCompat_Dialog
+                timePickerDialog = new TimePickerDialog(setTime.getContext(), R.style.Theme_AppCompat_DayNight_Dialog
                         , new TimePickerDialog.OnTimeSetListener() {
 
                     @Override
@@ -166,7 +166,7 @@ public class AddNewTaskActivity extends AppCompatActivity {
 
     }
 
-    public Date fomartDate (String date) throws ParseException {
+    public Date formatDate (String date) throws ParseException {
         Date fDate = dateFormat.parse(date);
         return fDate;
     }
@@ -174,9 +174,9 @@ public class AddNewTaskActivity extends AppCompatActivity {
     public int checkDate(String day1, String month1, String year1, String day2, String month2, String year2) throws ParseException {
 
         String date1 = day1+" "+month1+" "+year1;
-        Date Date1 = fomartDate(date1);
+        Date Date1 = formatDate(date1);
         String date2 = day2+" "+month2+" "+year2;
-        Date Date2 = fomartDate(date2);
+        Date Date2 = formatDate(date2);
 
         int check = Date1.compareTo(Date2);
         return check;
@@ -247,10 +247,14 @@ public class AddNewTaskActivity extends AppCompatActivity {
             note="";
         else note = addNote.getText().toString().trim();
         String date = setDate.getText().toString().trim();
-        String[] cutDate = date.split(" ");
-        String day = cutDate[0];
-        String month = cutDate[1];
-        String year = cutDate[2];
+        String day = null, month = null, year = null;
+        String[] cutDate;
+        if(!date.equals("Set date")){
+            cutDate = date.split(" ");
+            day = cutDate[0];
+            month = cutDate[1];
+            year = cutDate[2];
+        }
         String time = setTime.getText().toString().trim();
         String repeat = setRepeat.getText().toString().trim();
         String timeReminder = addReminders.getText().toString().trim();
@@ -263,7 +267,7 @@ public class AddNewTaskActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_save) {
+        if (id == R.id.action_save){
             Task task=createTask();
             if(task.getNameTask().equals("")){
                 Toast.makeText(AddNewTaskActivity.this,"Please enter characters!",Toast.LENGTH_SHORT).show();

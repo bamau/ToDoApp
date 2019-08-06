@@ -92,7 +92,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
                 Calendar calendar = Calendar.getInstance();
                 int hours = calendar.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar.get(Calendar.MINUTE);
-                timePickerDialog = new TimePickerDialog(setTime.getContext(), R.style.Theme_AppCompat_Dialog
+                timePickerDialog = new TimePickerDialog(setTime.getContext(), R.style.Theme_AppCompat_DayNight_Dialog
                         , new TimePickerDialog.OnTimeSetListener() {
 
                     @Override
@@ -197,7 +197,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
     public Task createTaskWithOldId(int id) {
 
 
-        Integer status = 0;
+        int status = 0;
         String name = edtName.getText().toString().trim();
         String note;
         if (addNote.getText().toString().trim().equals("Add a note"))

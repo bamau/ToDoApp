@@ -15,31 +15,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.support.constraint.motion.MotionScene.TAG;
+import static com.tbm.bamau.todoapp.DBStructure.DAY_TASK;
+import static com.tbm.bamau.todoapp.DBStructure.DB_NAME;
+import static com.tbm.bamau.todoapp.DBStructure.DB_VERSION;
+import static com.tbm.bamau.todoapp.DBStructure.LINK_AUDIO;
+import static com.tbm.bamau.todoapp.DBStructure.LINK_IMAGE;
+import static com.tbm.bamau.todoapp.DBStructure.MONTH_TASK;
+import static com.tbm.bamau.todoapp.DBStructure.NAME_TASK;
+import static com.tbm.bamau.todoapp.DBStructure.NOTE_TASK;
+import static com.tbm.bamau.todoapp.DBStructure.REPEAT_TASK;
+import static com.tbm.bamau.todoapp.DBStructure.TASKTABLE;
+import static com.tbm.bamau.todoapp.DBStructure.TASK_ID;
+import static com.tbm.bamau.todoapp.DBStructure.TASK_STATUS;
+import static com.tbm.bamau.todoapp.DBStructure.TIME_REMINDER;
+import static com.tbm.bamau.todoapp.DBStructure.TIME_TASK;
+import static com.tbm.bamau.todoapp.DBStructure.YEAR_TASK;
 
 public class DbHelper extends SQLiteOpenHelper {
 
-    private static final int DB_VERSION = 1;
-    private static final String DB_NAME = "todoapp";
-    private static final String TASKTABLE = "Task";
-    private static final String TASK_ID = "Id";
-    private static final String TASK_STATUS = "Status";
-    private static final String NAME_TASK = "NameTask";
-    private static final String TIME_TASK = "TimeTask";
-    private static final String DAY_TASK = "DayTask";
-    private static final String MONTH_TASK = "MonthTask";
-    private static final String YEAR_TASK = "YearTask";
-    private static final String REPEAT_TASK = "RepeatTask";
-    private static final String TIME_REMINDER = "TimeReminder";
-    private static final String NOTE_TASK = "NoteTask";
-    private static final String LINK_IMAGE = "LinkImage";
-    private static final String LINK_AUDIO = "LinkAudio";
-
     private Context context;
-
     public DbHelper(Context context){
         super(context,DB_NAME,null,DB_VERSION);
     }
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -153,7 +150,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(NOTE_TASK, task.getNote());
         values.put(LINK_IMAGE, task.getLinkImage());
         values.put(LINK_AUDIO, task.getLinkAudio());
-        db.update(TASKTABLE,values,TASK_ID +" = " + task.getIdTask(),null);
+        db.update(TASKTABLE,values,TASK_ID +"=?",new String[] { String.valueOf(task.getIdTask())});
         Log.d(TAG, "'"+task.getIdTask()+"'");
         Log.d(TAG, "'"+TASK_ID+"'");
 
@@ -254,6 +251,11 @@ public class DbHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return listTask;
+    }
+
+    public Cursor readTaskPerMonth(String month, String year, int status, SQLiteDatabase database){
+        Cursor cursor = database.rawQuery("SELECT * FROM ( SELECT * FROM "+TASKTABLE+") WHERE ("+MONTH_TASK+" LIKE'"+month+"%' AND "+YEAR_TASK+" LIKE'"+year+"%' AND "+TASK_STATUS+" LIKE'"+status+"%')",null);
+        return cursor;
     }
 
     public List<Task> getListTaskWithStatus(int status) {

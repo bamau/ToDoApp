@@ -33,7 +33,6 @@ public class ViewDoneTask_Fragment extends Fragment {
     DbHelper database;
     SwipeMenuListView listTask;
     List<Task> arrayList;
-    int status=1;
 
     @Nullable
     @Override
@@ -42,7 +41,7 @@ public class ViewDoneTask_Fragment extends Fragment {
 
         listTask = view.findViewById(R.id.swipelistview);
         setupAdapter(view);
-        updateListTaskWithChangeStatus(status);
+        updateListTaskWithChangeStatus(1);
         return view;
     }
 
@@ -113,7 +112,7 @@ public class ViewDoneTask_Fragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 database.deleteTask(database.getTaskById(id));
                 Toast.makeText(getContext(), "Delete success!", Toast.LENGTH_SHORT).show();
-                updateListTaskWithChangeStatus(status);
+                updateListTaskWithChangeStatus(1);
             }
         });
         dialogXoa.setPositiveButton("No", new DialogInterface.OnClickListener() {

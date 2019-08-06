@@ -49,10 +49,15 @@ public class ViewDay_Fragment extends Fragment {
     List<Task> arrayList;
     ImageButton nextButton, previousButton;
     TextView currentDate;
-    int status =0;
 
     Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH);
+   OnMessageReadListenerDay onMessageReadListenerDay;
+
+
+    public interface OnMessageReadListenerDay{
+        public void onMessageReadDay(CharSequence input);
+    }
 
     @Nullable
     @Override
@@ -66,20 +71,24 @@ public class ViewDay_Fragment extends Fragment {
         setupAdapter(view);
 
         try {
-            checkListWithDate(status,cutDay[0],cutDay[1],cutDay[2]);
+            checkListWithDate(0,cutDay[0],cutDay[1],cutDay[2]);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-        updateListTask();
+        Bundle bundle = getArguments();
+        if (bundle != null){
+            String date =bundle.getString("CHANGE_DATE");
+            getListTaskOneDate(date, 0);
+        }else updateListTask();
 
         nextButton.setOnClickListener(new View.OnClickListener() {
+            String cDate;
             @Override
             public void onClick(View v) {
                 calendar.add(calendar.DAY_OF_MONTH,1);
-                String cDate = dateFormat.format(calendar.getTime());
+                cDate = dateFormat.format(calendar.getTime());
                 currentDate.setText(cDate);
-                updateListTaskWithChangeDate(cDate,status);
+                updateListTaskWithChangeDate(cDate,0);
             }
         });
 
@@ -89,11 +98,28 @@ public class ViewDay_Fragment extends Fragment {
                 calendar.add(calendar.DAY_OF_MONTH,-1);
                 String cDate = dateFormat.format(calendar.getTime());
                 currentDate.setText(cDate);
-                updateListTaskWithChangeDate(cDate,status);
+                updateListTaskWithChangeDate(cDate,0);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof ViewDay_Fragment.OnMessageReadListenerDay) {
+            onMessageReadListenerDay = (ViewDay_Fragment.OnMessageReadListenerDay) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement OnMessageReadListenerDay");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onMessageReadListenerDay = null;
     }
 
     public Date fomartDate (String date) throws ParseException {
@@ -203,7 +229,7 @@ public class ViewDay_Fragment extends Fragment {
         if (arrayList != null)
             arrayList.clear();
         String[] cutDay = currentDay.split(" ");
-        arrayList=database.getListTaskWithDay(cutDay[0],cutDay[1],cutDay[2],status);
+        arrayList=database.getListTaskWithDay(cutDay[0],cutDay[1],cutDay[2],0);
         taskAdapter = new TaskAdapter(getActivity(),R.layout.item_task, arrayList);
         listTask.setAdapter(taskAdapter);
         if(taskAdapter!= null){
@@ -224,7 +250,28 @@ public class ViewDay_Fragment extends Fragment {
         }
     }
 
-        private void DialogXoaTask(final int id){
+    public void getListTaskOneDate(String day, int status){
+
+        currentDate.setText(day);
+        database = new DbHelper(getActivity());
+        if (arrayList != null)
+            arrayList.clear();
+        String[] cutDay = day.split(" ");
+        arrayList=database.getListTaskWithDay(cutDay[0],cutDay[1],cutDay[2],status);
+        taskAdapter = new TaskAdapter(getActivity(),R.layout.item_task, arrayList);
+        listTask.setAdapter(taskAdapter);
+        try {
+            Date date = dateFormat.parse(day);
+            calendar.setTime(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if(taskAdapter!= null){
+            taskAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void DialogXoaTask(final int id){
         final String cDate = dateFormat.format(calendar.getTime());
         AlertDialog.Builder dialogXoa = new AlertDialog.Builder(getContext());
         dialogXoa.setMessage("Do you want to delete this task?");
@@ -233,7 +280,7 @@ public class ViewDay_Fragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 database.deleteTask(database.getTaskById(id));
                 Toast.makeText(getContext(), "Delete success!", Toast.LENGTH_SHORT).show();
-                updateListTaskWithChangeDate(cDate,status);
+                updateListTaskWithChangeDate(cDate,0);
             }
         });
         dialogXoa.setPositiveButton("No", new DialogInterface.OnClickListener() {
