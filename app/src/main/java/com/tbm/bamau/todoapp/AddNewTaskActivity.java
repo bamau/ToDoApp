@@ -56,7 +56,7 @@ public class AddNewTaskActivity extends AppCompatActivity {
     PendingIntent pendingIntent;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH);
-    SimpleDateFormat tFormat = new SimpleDateFormat("K:mm a", Locale.ENGLISH);
+    SimpleDateFormat tFormat = new SimpleDateFormat("KK:mm:a", Locale.ENGLISH);
     final String[] Repeat = { "No repeat", "Every day", "Every week", "Every month", "Every year"};
 
     @Override
@@ -110,8 +110,7 @@ public class AddNewTaskActivity extends AppCompatActivity {
                         c.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         c.set(Calendar.MINUTE, minute);
                         c.setTimeZone(TimeZone.getDefault());
-
-                        String task_time = tFormat.format(c.getTimeInMillis());
+                        String task_time = tFormat.format(c.getTime());
                         setTime.setText(task_time);
 
                     }
@@ -277,23 +276,29 @@ public class AddNewTaskActivity extends AppCompatActivity {
 
         int id = item.getItemId();
         if (id == R.id.action_save){
-            Task task=createTask();
-            if(task.getNameTask().equals("")){
+            if(setDate.getText().toString().trim().equals("Set date")){
+                Toast.makeText(AddNewTaskActivity.this, "Please set a date!", Toast.LENGTH_SHORT).show();
+            }else
+                if(setTime.getText().toString().trim().equals("Set time")){
+                    Toast.makeText(AddNewTaskActivity.this, "Please set a time!", Toast.LENGTH_SHORT).show();
+                }else
+                    if(edtName.getText().toString().trim().equals("")){
                 Toast.makeText(AddNewTaskActivity.this,"Please enter characters!",Toast.LENGTH_SHORT).show();
-            }else{
+            }else {
+                Task task=createTask();
                 Intent newIntent = new Intent(this, AlarmReceiver.class);
                 pendingIntent = PendingIntent.getBroadcast(this,0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 database.addTask(task);
-                String alertTitle = task.getNameTask();
-                newIntent.putExtra(getString(R.string.alert_title), alertTitle);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, newIntent, 0);
-                Time time;
+//                String alertTitle = task.getNameTask();
+//                newIntent.putExtra(getString(R.string.alert_title), alertTitle);
+//                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, newIntent, 0);
+                Time time = null;
                 try {
                     time = new Time(tFormat.parse(task.getTimeTask()).getTime());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                alarmManager.set(AlarmManager.RTC_WAKEUP, Long.parseLong(task.getTimeTask()), pendingIntent);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, time.getTime(), pendingIntent);
                 Intent intent = new Intent(AddNewTaskActivity.this, MainActivity.class);
                 startActivity(intent);
                 Toast.makeText(this, "Add Success!", Toast.LENGTH_SHORT).show();

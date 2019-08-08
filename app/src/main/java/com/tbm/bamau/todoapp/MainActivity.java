@@ -1,20 +1,9 @@
 package com.tbm.bamau.todoapp;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,35 +12,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.baoyz.swipemenulistview.SwipeMenu;
-import com.baoyz.swipemenulistview.SwipeMenuCreator;
-import com.baoyz.swipemenulistview.SwipeMenuItem;
-import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.tbm.bamau.todoapp.Adapter.TaskAdapter;
 import com.tbm.bamau.todoapp.Fragment.ViewDay_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewDoneTask_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewLaterTask_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewMonth_Fragment;
-import com.tbm.bamau.todoapp.Fragment.ViewWeek_Fragment;
-import com.tbm.bamau.todoapp.Models.Task;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -65,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     AlarmManager alarmManager;
 
     ViewDay_Fragment viewDay_fragment = new ViewDay_Fragment();
-    ViewWeek_Fragment viewWeek_fragment = new ViewWeek_Fragment();
     ViewMonth_Fragment viewMonth_fragment = new ViewMonth_Fragment();
     ViewDoneTask_Fragment viewDoneTask_fragment = new ViewDoneTask_Fragment();
     ViewLaterTask_Fragment viewLaterTask_fragment = new ViewLaterTask_Fragment();
@@ -148,10 +113,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     viewDay_fragment).commit();
             getSupportActionBar().setTitle("Day");
-        } else if (id == R.id.nav_week) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    viewWeek_fragment).commit();
-            getSupportActionBar().setTitle("Week");
+            Bundle bundle = new Bundle();
+            bundle.putString("CHANGE_DATE", null);
+            viewDay_fragment.setArguments(bundle);
         } else if (id == R.id.nav_month) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     viewMonth_fragment).commit();

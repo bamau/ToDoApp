@@ -289,4 +289,10 @@ public class ViewDay_Fragment extends Fragment {
         });
         dialogXoa.show();
     }
+
+    @Override
+    public void onDestroy() {
+        this.getArguments().clear();
+        super.onDestroy();
+    }
 }
