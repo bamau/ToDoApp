@@ -139,10 +139,9 @@ public class ViewMonth_Fragment extends Fragment {
 
     private void CollectTaskPerMonth (String month, String year){
         taskList.clear();
-        int status = 0;
         database = new DbHelper(getActivity());
         SQLiteDatabase db =  database.getReadableDatabase();
-        Cursor cursor = database.readTaskPerMonth(month,year, status,db);
+        Cursor cursor = database.readTaskPerMonth(month,year, 0,db);
         while (cursor.moveToNext()){
             String nameTask = cursor.getString(cursor.getColumnIndex(DBStructure.NAME_TASK));
             int idTask = cursor.getInt(cursor.getColumnIndex(DBStructure.TASK_ID));

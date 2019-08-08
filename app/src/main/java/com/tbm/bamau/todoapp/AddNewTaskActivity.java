@@ -1,9 +1,11 @@
 package com.tbm.bamau.todoapp;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,7 +28,10 @@ import android.widget.Toast;
 
 import com.tbm.bamau.todoapp.Fragment.ViewDay_Fragment;
 import com.tbm.bamau.todoapp.Models.Task;
+import com.tbm.bamau.todoapp.Notification.AlarmReceiver;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,8 +50,13 @@ public class AddNewTaskActivity extends AppCompatActivity {
     TextView due, setDate, setTime, setRepeat, reminders, addReminders, note, addNote, image, takePhoto, audio, addAudio ;
     EditText edtName, editNote;
     Button btnOk, btnCancel;
+    AlarmManager alarmManager;
+    Calendar calendar;
+
+    PendingIntent pendingIntent;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH);
+    SimpleDateFormat tFormat = new SimpleDateFormat("K:mm a", Locale.ENGLISH);
     final String[] Repeat = { "No repeat", "Every day", "Every week", "Every month", "Every year"};
 
     @Override
@@ -59,11 +69,11 @@ public class AddNewTaskActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Initialization();
+        calendar =Calendar.getInstance();
 
         setDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
                 int year = calendar.get(Calendar.YEAR);
                 int month = calendar.get(Calendar.MONTH);
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -89,7 +99,6 @@ public class AddNewTaskActivity extends AppCompatActivity {
         setTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
                 int hours = calendar.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar.get(Calendar.MINUTE);
                 timePickerDialog = new TimePickerDialog(setTime.getContext(), R.style.Theme_AppCompat_DayNight_Dialog
@@ -101,8 +110,8 @@ public class AddNewTaskActivity extends AppCompatActivity {
                         c.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         c.set(Calendar.MINUTE, minute);
                         c.setTimeZone(TimeZone.getDefault());
-                        SimpleDateFormat hFomart = new SimpleDateFormat("K:mm a", Locale.ENGLISH);
-                        String task_time = hFomart.format(c.getTime());
+
+                        String task_time = tFormat.format(c.getTimeInMillis());
                         setTime.setText(task_time);
 
                     }
@@ -197,7 +206,7 @@ public class AddNewTaskActivity extends AppCompatActivity {
         audio = findViewById(R.id.audio);
         addAudio = findViewById(R.id.addAudio);
         edtName = findViewById(R.id.editText);
-
+        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
     }
 
     private void dialogAddNote() {
@@ -239,7 +248,6 @@ public class AddNewTaskActivity extends AppCompatActivity {
 
 
     public Task createTask() {
-
         Integer status = 0;
         String name = edtName.getText().toString().trim();
         String note;
@@ -266,13 +274,26 @@ public class AddNewTaskActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         int id = item.getItemId();
         if (id == R.id.action_save){
             Task task=createTask();
             if(task.getNameTask().equals("")){
                 Toast.makeText(AddNewTaskActivity.this,"Please enter characters!",Toast.LENGTH_SHORT).show();
             }else{
+                Intent newIntent = new Intent(this, AlarmReceiver.class);
+                pendingIntent = PendingIntent.getBroadcast(this,0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 database.addTask(task);
+                String alertTitle = task.getNameTask();
+                newIntent.putExtra(getString(R.string.alert_title), alertTitle);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, newIntent, 0);
+                Time time;
+                try {
+                    time = new Time(tFormat.parse(task.getTimeTask()).getTime());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                alarmManager.set(AlarmManager.RTC_WAKEUP, Long.parseLong(task.getTimeTask()), pendingIntent);
                 Intent intent = new Intent(AddNewTaskActivity.this, MainActivity.class);
                 startActivity(intent);
                 Toast.makeText(this, "Add Success!", Toast.LENGTH_SHORT).show();

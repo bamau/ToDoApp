@@ -52,7 +52,7 @@ public class ViewDay_Fragment extends Fragment {
 
     Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH);
-   OnMessageReadListenerDay onMessageReadListenerDay;
+    OnMessageReadListenerDay onMessageReadListenerDay;
 
 
     public interface OnMessageReadListenerDay{
@@ -80,7 +80,6 @@ public class ViewDay_Fragment extends Fragment {
             String date =bundle.getString("CHANGE_DATE");
             getListTaskOneDate(date, 0);
         }else updateListTask();
-
         nextButton.setOnClickListener(new View.OnClickListener() {
             String cDate;
             @Override

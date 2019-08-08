@@ -1,5 +1,6 @@
 package com.tbm.bamau.todoapp;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FloatingActionButton floatingActionButton;
     private DrawerLayout drawer;
     Toolbar toolbar;
+    AlarmManager alarmManager;
 
     ViewDay_Fragment viewDay_fragment = new ViewDay_Fragment();
     ViewWeek_Fragment viewWeek_fragment = new ViewWeek_Fragment();
@@ -76,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Initialization();
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Day");
+
+
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -104,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         floatingActionButton = findViewById(R.id.fab);
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout);
+        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
     }
 
     @Override
@@ -178,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Bundle bundle = new Bundle();
         bundle.putString("CHANGE_DATE", (String) input);
         viewDay_fragment.setArguments(bundle);
-
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,viewDay_fragment).commit();
+        getSupportActionBar().setTitle("Day");
     }
 }

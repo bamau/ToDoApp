@@ -35,4 +35,5 @@
     <string name="set_repeat">Set repeat</string>
     <string name="pick_a_repeat">Pick a repeat</string>
     <string name="norepeat">No repeat</string>
+    <string name="alert_title">title</string>
 </resources>
