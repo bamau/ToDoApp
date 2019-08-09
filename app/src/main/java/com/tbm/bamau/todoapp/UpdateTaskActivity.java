@@ -36,12 +36,14 @@ public class UpdateTaskActivity extends AppCompatActivity {
     DatePickerDialog datePickerDialog;
     TimePickerDialog timePickerDialog;
     DbHelper database;
-    TextView due, setDate, setTime, setRepeat, reminders, addReminders, note, addNote, image, takePhoto, audio, addAudio ;
+    TextView due, setDate, setTime, setRepeat, reminders, addReminders, note, addNote, image, takePhoto;
     EditText edtName, editNote;
     Button btnOk, btnCancel;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH);
-    final String[] Repeat = { "No repeat", "Every day", "Every week", "Every month", "Every year"};
+
+    final String[] Repeat = { "No Repeat", "Every day", "Every week", "Every month", "Every year"};
+
 
 
     @Override
@@ -49,7 +51,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_task);
 
-        getSupportActionBar().setTitle("Update Task");
+        getSupportActionBar().setTitle(R.string.update_task);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         Initialization();
@@ -59,7 +61,6 @@ public class UpdateTaskActivity extends AppCompatActivity {
 
         database = new DbHelper(this);
         Log.d(TAG, "'"+idTask+"'");
-
         Task task = database.getTaskById(idTask);
         getDetailTask(task);
 
@@ -163,15 +164,18 @@ public class UpdateTaskActivity extends AppCompatActivity {
         editNote = dialog.findViewById(R.id.editNote);
         btnOk = dialog.findViewById(R.id.btn_ok);
         btnCancel = dialog.findViewById(R.id.btn_cancel);
-        if(!addNote.getText().toString().trim().equals("Add a note"))
+        if(!addNote.getText().toString().trim().equals(R.string.add_a_note))
+        {
             editNote.setText(addNote.getText().toString().trim());
+            edtName.setSelection(edtName.getText().length());
+        }
         dialog.show();
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(editNote.getText().toString().trim().equals(""))
-                    Toast.makeText(UpdateTaskActivity.this, "You can't add empty note", Toast.LENGTH_SHORT).show();
-                if(!addNote.getText().toString().trim().equals("Add a note"))
+                    Toast.makeText(UpdateTaskActivity.this, R.string.you_can_not_add_empty_note, Toast.LENGTH_SHORT).show();
+                if(!addNote.getText().toString().trim().equals(R.string.add_a_note))
                     addNote.setText(null);
                 addNote.setText(editNote.getText().toString().trim());
                 dialog.dismiss();
@@ -200,7 +204,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
         int status = 0;
         String name = edtName.getText().toString().trim();
         String note;
-        if (addNote.getText().toString().trim().equals("Add a note"))
+        if (addNote.getText().toString().trim().equals(R.string.add_a_note))
             note="";
         else note = addNote.getText().toString().trim();
         String date = setDate.getText().toString().trim();
@@ -212,8 +216,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
         String repeat = setRepeat.getText().toString().trim();
         String timeReminder = addReminders.getText().toString().trim();
         String linkImage = takePhoto.getText().toString().trim();
-        String linkAudio = addAudio.getText().toString().trim();
-        Task task = new Task(id,status,name, time, day, month, year, repeat,timeReminder, note,linkImage,linkAudio);
+        Task task = new Task(id,status,name, time, day, month, year, repeat,timeReminder, note,linkImage);
         return task;
     }
 
@@ -226,12 +229,12 @@ public class UpdateTaskActivity extends AppCompatActivity {
         if (id == R.id.action_save) {
             Log.d(TAG, "'"+task.getIdTask()+"'");
             if(task.getNameTask().equals("")){
-                Toast.makeText(UpdateTaskActivity.this,"Please enter characters!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateTaskActivity.this, R.string.please_enter_character,Toast.LENGTH_SHORT).show();
             }else{
                 database.Update(task);
                 Intent intent = new Intent(UpdateTaskActivity.this, MainActivity.class);
                 startActivity(intent);
-                Toast.makeText(this, "Update Success!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.update_success, Toast.LENGTH_SHORT).show();
             }
         }
         if(id==android.R.id.home){
@@ -244,6 +247,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
 
         int i = task.getIdTask();
         edtName.setText(task.getNameTask());
+        edtName.setSelection(edtName.getText().length());
         String day, month, year;
         day = task.getDayTask();
         month = task.getMonthTask();
@@ -254,7 +258,6 @@ public class UpdateTaskActivity extends AppCompatActivity {
         addReminders.setText(task.getTimeReminder());
         addNote.setText(task.getNote());
         takePhoto.setText(task.getLinkImage());
-        addAudio.setText(task.getLinkAudio());
     }
 
     private void Initialization(){
@@ -269,8 +272,6 @@ public class UpdateTaskActivity extends AppCompatActivity {
         addNote = findViewById(R.id.addNote);
         image = findViewById(R.id.image);
         takePhoto = findViewById(R.id.takePhoto);
-        audio = findViewById(R.id.audio);
-        addAudio = findViewById(R.id.addAudio);
         edtName = findViewById(R.id.editText);
 
     }

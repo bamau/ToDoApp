@@ -65,21 +65,15 @@ public class ViewDay_Fragment extends Fragment {
         View view = inflater.inflate(R.layout.viewday_fragment, container, false);
 
         String currDate = dateFormat.format(calendar.getTime());
-        String[] cutDay = currDate.split(" ");
 
         Initialization(view);
         setupAdapter(view);
 
-        try {
-            checkListWithDate(0,cutDay[0],cutDay[1],cutDay[2]);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
         Bundle bundle = getArguments();
         if (bundle != null){
             String date =bundle.getString("CHANGE_DATE");
             getListTaskOneDate(date, 0);
-        }else updateListTask();
+        }
         nextButton.setOnClickListener(new View.OnClickListener() {
             String cDate;
             @Override
@@ -121,31 +115,6 @@ public class ViewDay_Fragment extends Fragment {
         onMessageReadListenerDay = null;
     }
 
-    public Date fomartDate (String date) throws ParseException {
-        Date fDate = dateFormat.parse(date);
-        return fDate;
-    }
-
-    private void checkListWithDate(int status, String day, String month, String year) throws ParseException {
-        database = new DbHelper(getActivity());
-        String date = day+" "+month+" "+year;
-        Date curDate = fomartDate(date);
-        List<Task> list = new ArrayList<>();
-        list = database.getListTaskWithStatus(0);
-        String lDay, lMonth, lYear, lDate;
-        int check;
-        for(int i =0 ; i< list.size(); i++){
-            lDay = list.get(i).getDayTask();
-            lMonth = list.get(i).getMonthTask();
-            lYear = list.get(i).getYearTask();
-            lDate = lDay+" "+lMonth+" "+lYear;
-            Date tDate = fomartDate(lDate);
-            check = curDate.compareTo(tDate);
-            if (check > 0){
-                database.UpdateStatusToLater(list.get(i));
-            }
-        }
-    }
     private void Initialization (View view){
         listTask = view.findViewById(R.id.listView);
         nextButton = view.findViewById(R.id.nextBtn);
@@ -206,7 +175,7 @@ public class ViewDay_Fragment extends Fragment {
                     case 0:
                         Task task = database.getTaskById(id);
                         database.UpdateStatus(task);
-                        Toast.makeText(getContext(), "Congratulations! You done task!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), R.string.congratulations_you_done_task, Toast.LENGTH_LONG).show();
                         updateListTask();
                         // complete
                         break;
@@ -273,26 +242,20 @@ public class ViewDay_Fragment extends Fragment {
     private void DialogXoaTask(final int id){
         final String cDate = dateFormat.format(calendar.getTime());
         AlertDialog.Builder dialogXoa = new AlertDialog.Builder(getContext());
-        dialogXoa.setMessage("Do you want to delete this task?");
-        dialogXoa.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+        dialogXoa.setMessage(R.string.do_you_want_delete_this_task);
+        dialogXoa.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 database.deleteTask(database.getTaskById(id));
-                Toast.makeText(getContext(), "Delete success!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.delete_success, Toast.LENGTH_SHORT).show();
                 updateListTaskWithChangeDate(cDate,0);
             }
         });
-        dialogXoa.setPositiveButton("No", new DialogInterface.OnClickListener() {
+        dialogXoa.setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }
         });
         dialogXoa.show();
-    }
-
-    @Override
-    public void onDestroy() {
-        this.getArguments().clear();
-        super.onDestroy();
     }
 }

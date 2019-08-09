@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.tbm.bamau.todoapp.DbHelper;
 import com.tbm.bamau.todoapp.Models.Task;
+import com.tbm.bamau.todoapp.R;
 
 import java.sql.Time;
 import java.text.ParseException;
@@ -23,25 +24,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     SimpleDateFormat tFormat = new SimpleDateFormat("KK:mm:a", Locale.ENGLISH);
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent myIntent = new Intent(context, MusicNotification.class);
-        DbHelper database = new DbHelper(context);
-        List<Task> listTime = new ArrayList<>();
-        listTime = database.getListTaskWithStatus(0);
-        for (int i = 0; i<listTime.size(); i++){
-            String time = listTime.get(i).getTimeTask();
-            Time time_task = null;
-            try {
-                time_task = new Time(tFormat.parse(listTime.get(i).getTimeTask()).getTime());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            String day = listTime.get(i).getDayTask();
-            String month = listTime.get(i).getMonthTask();
-            String year = listTime.get(i).getYearTask();
-            Log.e("Toi trong Recwiver", "Xin chao");
-            myIntent = new Intent(context, MusicNotification.class);
-
-        }
-        context.startService(myIntent);
+        String Title = intent.getStringExtra(context.getString(R.string.alert_title));
+        Intent x = new Intent(context, MusicNotification.class);
+        x.putExtra(context.getString(R.string.alert_title), Title);
+        x.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(x);
     }
 }

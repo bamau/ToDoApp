@@ -15,5 +15,4 @@ public class DBStructure {
     public static final String TIME_REMINDER = "TimeReminder";
     public static final String NOTE_TASK = "NoteTask";
     public static final String LINK_IMAGE = "LinkImage";
-    public static final String LINK_AUDIO = "LinkAudio";
 }

@@ -70,7 +70,8 @@ public class ViewMonth_Fragment extends Fragment {
         database = new DbHelper(getActivity());
 
 
-        setUpCalendar();
+        String currentDate = dateFormat.format(calendar.getTime());
+        setUpCalendarWithCurrentDate(currentDate);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +138,26 @@ public class ViewMonth_Fragment extends Fragment {
         gridView.setAdapter(gridAdapter);
     }
 
+    private void setUpCalendarWithCurrentDate(String date) {
+        Calendar calendar = Calendar.getInstance();
+        date = dateFormat.format(calendar.getTime());
+        currentDate.setText(date);
+        dates.clear();
+        Calendar monthCalendar = (Calendar) calendar.clone();
+        monthCalendar.set(Calendar.DAY_OF_MONTH,1);
+        int FirstDayOfMonth = monthCalendar.get(Calendar.DAY_OF_WEEK)-1;
+        monthCalendar.add(Calendar.DAY_OF_MONTH, -FirstDayOfMonth);
+        CollectTaskPerMonth(monthFormat.format(calendar.getTime()),yearFormat.format(calendar.getTime()));
+
+        while (dates.size() < MAX_CALENDAR_DAYS){
+            dates.add(monthCalendar.getTime());
+            monthCalendar.add(Calendar.DAY_OF_MONTH,1);
+        }
+        gridAdapter = new GridAdapterMonth(getContext(),dates,calendar,taskList);
+        gridView.setAdapter(gridAdapter);
+    }
+
+
     private void CollectTaskPerMonth (String month, String year){
         taskList.clear();
         database = new DbHelper(getActivity());
@@ -154,8 +175,7 @@ public class ViewMonth_Fragment extends Fragment {
             String timeReminder = cursor.getString(cursor.getColumnIndex(DBStructure.TIME_REMINDER));
             String nodeTask = cursor.getString(cursor.getColumnIndex(DBStructure.NOTE_TASK));
             String linkImage = cursor.getString(cursor.getColumnIndex(DBStructure.LINK_IMAGE));
-            String linkAudio = cursor.getString(cursor.getColumnIndex(DBStructure.LINK_AUDIO));
-            Task task = new Task(idTask,statusTask,nameTask,timeTask,dayTask,monthTask, yearTask, repeatTask, timeReminder, nodeTask,linkImage,linkAudio);
+            Task task = new Task(idTask,statusTask,nameTask,timeTask,dayTask,monthTask, yearTask, repeatTask, timeReminder, nodeTask,linkImage);
             taskList.add(task);
         }
         cursor.close();

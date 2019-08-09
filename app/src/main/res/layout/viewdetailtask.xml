@@ -30,6 +30,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="20dp"
         android:textColor="@color/blue"
+        android:inputType="none"
         android:hint="@string/task_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

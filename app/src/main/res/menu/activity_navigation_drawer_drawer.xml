@@ -6,28 +6,28 @@
         <item
             android:id="@+id/nav_day"
             android:icon="@drawable/ic_work"
-            android:title="Day" />
+            android:title="@string/day" />
         <item
             android:id="@+id/nav_month"
             android:icon="@drawable/ic_work"
-            android:title="Month" />
+            android:title="@string/month" />
         <item
             android:id="@+id/nav_done_tasks"
             android:icon="@drawable/ic_done_tasks"
-            android:title="Done Tasks" />
+            android:title="@string/done_tasks" />
         <item
             android:id="@+id/nav_later_tasks"
             android:icon="@drawable/ic_done_tasks"
-            android:title="Later Tasks" />
+            android:title="@string/later_tasks" />
 
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
             <item
                 android:id="@+id/nav_setting"
                 android:icon="@drawable/ic_settings"
-                android:title="Setting" />
+                android:title="@string/setting" />
 
         </menu>
     </item>

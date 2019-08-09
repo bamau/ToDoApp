@@ -1,39 +1,73 @@
 <resources>
     <string name="app_name">ToDoApp</string>
-    <string name="title_activity_navigation_drawer">NavigationDrawerActivity</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="title_activity_navigation_drawer" translatable="false">NavigationDrawerActivity</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_title" translatable="false">Android Studio</string>
+    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="action_settings">Settings</string>
 
 
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="menu_work">Work</string>
     <string name="menu_home">Home</string>
-    <string name="add_new_list">Add New List</string>
     <string name="change_language">Change Language</string>
-    <string name="change_theme">Change Theme</string>
     <string name="rate_application">Rate Application</string>
     <string name="due">DUE</string>
     <string name="reminders">REMINDERS</string>
     <string name="note">NOTE</string>
     <string name="set_a_due_date_and_time">Set a due date and time</string>
     <string name="add_time_or_location_reminders">Add time or location reminders</string>
-    <string name="add_a_note">Add a note</string>
     <string name="image">IMAGE</string>
     <string name="audio">AUDIO</string>
     <string name="take_a_photo_or_choose_an_image">Take a photo or choose an image</string>
-    <string name="record_an_audio_note">Record an audio note</string>
-    <string name="set_time">Set time</string>
-    <string name="set_date">Set date</string>
     <string name="set_repeat">Set repeat</string>
     <string name="pick_a_repeat">Pick a repeat</string>
     <string name="norepeat">No repeat</string>
-    <string name="alert_title">title</string>
+    <string name="alert_title" translatable="false">title</string>
+    <string name="vietnamese">Vietnamese</string>
+    <string name="english">English</string>
+    <string name="done_tasks">Done Tasks</string>
+    <string name="later_tasks">Later Tasks</string>
+    <string name="communicate">Communicate</string>
+    <string name="add_new_task">Add new task</string>
+    <string name="setting">Setting</string>
+    <string name="ba_mau">Ba Mau</string>
+    <string name="to_do_app">To Do App</string>
+    <string name="add_new_note">Add new note</string>
+    <string name="enter_note">Enter note...</string>
+    <string name="ok">OK</string>
+    <string name="cancel">CANCEL</string>
+    <string name="task">TASK</string>
+    <string name="task_name">Task name</string>
+    <string name="every_day">Every day</string>
+    <string name="every_week">Every week</string>
+    <string name="every_month">Every month</string>
+    <string name="every_year">Every year</string>
+    <string name="update_task">Update Task</string>
+    <string name="detail">Detail</string>
+    <string name="change_theme">Change Theme</string>
+    <string name="day">Day</string>
+    <string name="month">Month</string>
+    <string name="done_task">Done Task</string>
+    <string name="later_task">Later Task</string>
+    <string name="new_task">New Task</string>
+    <string name="add_a_note">Add a note</string>
+    <string name="you_can_not_add_empty_note">You can\'t add empty note</string>
+    <string name="set_date">Set date</string>
+    <string name="set_time">Set time</string>
+    <string name="please_set_a_date">Please set a date!</string>
+    <string name="please_set_a_time">Please set a time!</string>
+    <string name="please_enter_character">Please enter characters!</string>
+    <string name="add_success">Add Success!</string>
+    <string name="do_you_want_delete_this_task">Do you want to delete this task?</string>
+    <string name="yes">Yes</string>
+    <string name="delete_success">Delete success!</string>
+    <string name="no">No</string>
+    <string name="update_success">Update Success!</string>
+    <string name="congratulations_you_done_task">Congratulations! You done task!</string>
+    <string name="alert">Alert:</string>
+    <string name="title_msg">title</string>
 </resources>

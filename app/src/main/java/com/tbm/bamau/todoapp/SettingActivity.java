@@ -1,5 +1,6 @@
 package com.tbm.bamau.todoapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -17,7 +18,7 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
 
 
-        getSupportActionBar().setTitle("Setting");
+        getSupportActionBar().setTitle(R.string.setting);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         changeLanguage = findViewById(R.id.changeLanguage);
@@ -27,21 +28,23 @@ public class SettingActivity extends AppCompatActivity {
         changeLanguage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(SettingActivity.this, "Change Language", Toast.LENGTH_SHORT).show();
+                Intent intent =new Intent(SettingActivity.this,ChooseLanguageActivity.class);
+                startActivity(intent);
+
             }
         });
 
         changeTheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(SettingActivity.this, "Change Theme", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingActivity.this, R.string.change_theme, Toast.LENGTH_SHORT).show();
             }
         });
 
         rateApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(SettingActivity.this, "Rate Application", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingActivity.this, R.string.rate_application, Toast.LENGTH_SHORT).show();
             }
         });
 

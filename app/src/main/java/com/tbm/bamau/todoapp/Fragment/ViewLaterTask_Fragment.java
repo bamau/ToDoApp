@@ -97,7 +97,10 @@ public class ViewLaterTask_Fragment extends Fragment {
         database = new DbHelper(getActivity());
         if (arrayList != null)
             arrayList.clear();
-        arrayList=database.getListTaskWithStatus(status);
+        arrayList=database.getListTaskWithStatusOrderByYear(status);
+        arrayList=database.getListTaskWithStatusOrderByMonth(status);
+        arrayList=database.getListTaskWithStatusOrderByDay(status);
+        arrayList=database.getListTaskWithStatusOrderByStatus(status);
         taskAdapter = new TaskAdapter(getActivity(),R.layout.item_task, arrayList);
         listTask.setAdapter(taskAdapter);
         if(taskAdapter!= null){
@@ -107,16 +110,16 @@ public class ViewLaterTask_Fragment extends Fragment {
 
     private void DialogXoaDoneTask(final int id){
         AlertDialog.Builder dialogXoa = new AlertDialog.Builder(getContext());
-        dialogXoa.setMessage("Do you want to delete this task?");
-        dialogXoa.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+        dialogXoa.setMessage(R.string.do_you_want_delete_this_task);
+        dialogXoa.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 database.deleteTask(database.getTaskById(id));
-                Toast.makeText(getContext(), "Delete success!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.delete_success, Toast.LENGTH_SHORT).show();
                 updateListTaskWithChangeStatus(2);
             }
         });
-        dialogXoa.setPositiveButton("No", new DialogInterface.OnClickListener() {
+        dialogXoa.setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }

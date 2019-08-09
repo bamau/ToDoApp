@@ -18,6 +18,15 @@ import com.tbm.bamau.todoapp.Fragment.ViewDay_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewDoneTask_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewLaterTask_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewMonth_Fragment;
+import com.tbm.bamau.todoapp.Models.Task;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -30,6 +39,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar toolbar;
     AlarmManager alarmManager;
 
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
+    Calendar calendar = Calendar.getInstance();
+    final  String currentDate = dateFormat.format(calendar.getTime());
+
     ViewDay_Fragment viewDay_fragment = new ViewDay_Fragment();
     ViewMonth_Fragment viewMonth_fragment = new ViewMonth_Fragment();
     ViewDoneTask_Fragment viewDoneTask_fragment = new ViewDoneTask_Fragment();
@@ -39,12 +52,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         database = new DbHelper(this);
         Initialization();
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Day");
-
-
+        getSupportActionBar().setTitle(R.string.day);
+        try {
+            checkListWithDate(0,currentDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -62,11 +79,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         if(savedInstanceState == null){
+            Bundle bundle = new Bundle();
+            bundle.putString("CHANGE_DATE", currentDate);
+            viewDay_fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     viewDay_fragment).commit();
             navigationView.setCheckedItem(R.id.nav_day);
         }
 
+    }
+
+    private void checkListWithDate(int status, String currentDate) throws ParseException {
+        database = new DbHelper(this);
+        Date curDate = formatDate(currentDate);
+        List<Task> list = new ArrayList<>();
+        list = database.getListTaskWithStatusOrderByYear(status);
+        list = database.getListTaskWithStatusOrderByMonth(status);
+        list = database.getListTaskWithStatusOrderByDay(status);
+        list = database.getListTaskWithStatusOrderByStatus(status);
+        String lDay=null, lMonth=null, lYear=null, lDate=null;
+        int check;
+        for(int i =0 ; i< list.size(); i++){
+            lDay = list.get(i).getDayTask();
+            lMonth = list.get(i).getMonthTask();
+            lYear = list.get(i).getYearTask();
+            lDate = lDay+" "+lMonth+" "+lYear;
+            Date tDate = formatDate(lDate);
+            check = curDate.compareTo(tDate);
+            if (check > 0){
+                database.UpdateStatusToLater(list.get(i));
+            }
+        }
+    }
+
+    private Date formatDate (String date) throws ParseException {
+        Date fDate = dateFormat.parse(date);
+        return fDate;
     }
 
     public void Initialization(){
@@ -110,27 +158,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_day) {
+            Bundle bundle = new Bundle();
+            bundle.putString("CHANGE_DATE", currentDate);
+            viewDay_fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     viewDay_fragment).commit();
-            getSupportActionBar().setTitle("Day");
-            Bundle bundle = new Bundle();
-            bundle.putString("CHANGE_DATE", null);
-            viewDay_fragment.setArguments(bundle);
+            getSupportActionBar().setTitle(R.string.day);
         } else if (id == R.id.nav_month) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     viewMonth_fragment).commit();
-            getSupportActionBar().setTitle("Month");
+            getSupportActionBar().setTitle(R.string.month);
         } else if (id == R.id.nav_done_tasks) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     viewDoneTask_fragment).commit();
-            getSupportActionBar().setTitle("Done Task");
+            getSupportActionBar().setTitle(R.string.done_task);
         } else if (id == R.id.nav_setting) {
             Intent intent = new Intent(MainActivity.this, SettingActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_later_tasks) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     viewLaterTask_fragment).commit();
-            getSupportActionBar().setTitle("Later Task");
+            getSupportActionBar().setTitle(R.string.later_task);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -148,6 +196,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bundle.putString("CHANGE_DATE", (String) input);
         viewDay_fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,viewDay_fragment).commit();
-        getSupportActionBar().setTitle("Day");
+        getSupportActionBar().setTitle(R.string.day);
     }
 }

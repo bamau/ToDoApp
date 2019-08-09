@@ -12,12 +12,11 @@ public class Task {
     private String TimeReminder;
     private String Note;
     private String LinkImage;
-    private String LinkAudio;
 
     public Task() {
     }
 
-    public Task(int statusTask, String nameTask, String timeTask, String dayTask, String monthTask, String yearTask, String repeat, String timeReminder, String note, String linkImage, String linkAudio) {
+    public Task(int statusTask, String nameTask, String timeTask, String dayTask, String monthTask, String yearTask, String repeat, String timeReminder, String note, String linkImage) {
         StatusTask = statusTask;
         NameTask = nameTask;
         TimeTask = timeTask;
@@ -28,10 +27,9 @@ public class Task {
         TimeReminder = timeReminder;
         Note = note;
         LinkImage = linkImage;
-        LinkAudio = linkAudio;
     }
 
-    public Task(int idTask, int statusTask, String nameTask, String timeTask, String dayTask, String monthTask, String yearTask, String repeat, String timeReminder, String note, String linkImage, String linkAudio) {
+    public Task(int idTask, int statusTask, String nameTask, String timeTask, String dayTask, String monthTask, String yearTask, String repeat, String timeReminder, String note, String linkImage) {
         IdTask = idTask;
         StatusTask = statusTask;
         NameTask = nameTask;
@@ -43,7 +41,6 @@ public class Task {
         TimeReminder = timeReminder;
         Note = note;
         LinkImage = linkImage;
-        LinkAudio = linkAudio;
     }
 
     public int getIdTask() {
@@ -132,13 +129,5 @@ public class Task {
 
     public void setLinkImage(String linkImage) {
         LinkImage = linkImage;
-    }
-
-    public String getLinkAudio() {
-        return LinkAudio;
-    }
-
-    public void setLinkAudio(String linkAudio) {
-        LinkAudio = linkAudio;
     }
 }

@@ -8,14 +8,14 @@
     <TextView
         android:id="@+id/addNote"
         android:gravity="center"
-        android:text="Add new note"
+        android:text="@string/add_new_note"
         android:textSize="30sp"
         android:textStyle="bold"
         android:textColor="@color/blue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
-        android:hint="Enter note..."
+        android:hint="@string/enter_note"
         android:layout_marginTop="10dp"
         android:id="@+id/editNote"
         android:layout_below="@+id/addNote"
@@ -27,7 +27,7 @@
         android:layout_below="@+id/editNote"
         android:id="@+id/btn_ok"
         android:textStyle="bold"
-        android:text="OK"
+        android:text="@string/ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <Button
@@ -37,7 +37,7 @@
         android:layout_toRightOf="@+id/btn_ok"
         android:id="@+id/btn_cancel"
         android:textStyle="bold"
-        android:text="CANCEL"
+        android:text="@string/cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </RelativeLayout>
