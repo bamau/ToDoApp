@@ -10,9 +10,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -26,6 +28,8 @@ import com.tbm.bamau.todoapp.R;
 import com.tbm.bamau.todoapp.UpdateTaskActivity;
 
 import java.util.List;
+
+import static com.tbm.bamau.todoapp.MainActivity.hideSoftKeyboard;
 
 public class ViewLaterTask_Fragment extends Fragment {
 
@@ -42,7 +46,7 @@ public class ViewLaterTask_Fragment extends Fragment {
         listTask = view.findViewById(R.id.swipelistview);
         setupAdapter(view);
         updateListTaskWithChangeStatus(2);
-
+        setupUI(view);
         return view;
     }
 
@@ -100,7 +104,7 @@ public class ViewLaterTask_Fragment extends Fragment {
         arrayList=database.getListTaskWithStatusOrderByYear(status);
         arrayList=database.getListTaskWithStatusOrderByMonth(status);
         arrayList=database.getListTaskWithStatusOrderByDay(status);
-        arrayList=database.getListTaskWithStatusOrderByStatus(status);
+        arrayList=database.getListTaskWithStatusOrderByTime(status);
         taskAdapter = new TaskAdapter(getActivity(),R.layout.item_task, arrayList);
         listTask.setAdapter(taskAdapter);
         if(taskAdapter!= null){
@@ -125,5 +129,26 @@ public class ViewLaterTask_Fragment extends Fragment {
             }
         });
         dialogXoa.show();
+    }
+
+    public void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(getActivity());
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
 }

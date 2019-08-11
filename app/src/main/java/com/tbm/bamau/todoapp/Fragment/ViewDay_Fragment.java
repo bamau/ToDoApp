@@ -13,9 +13,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static android.support.constraint.motion.MotionScene.TAG;
+import static com.tbm.bamau.todoapp.MainActivity.hideSoftKeyboard;
 
 public class ViewDay_Fragment extends Fragment {
 
@@ -68,7 +71,7 @@ public class ViewDay_Fragment extends Fragment {
 
         Initialization(view);
         setupAdapter(view);
-
+        setupUI(view);
         Bundle bundle = getArguments();
         if (bundle != null){
             String date =bundle.getString("CHANGE_DATE");
@@ -257,5 +260,26 @@ public class ViewDay_Fragment extends Fragment {
             }
         });
         dialogXoa.show();
+    }
+
+    public void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(getActivity());
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
 }

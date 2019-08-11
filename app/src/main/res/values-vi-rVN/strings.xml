@@ -60,4 +60,9 @@
     <string name="you_can_not_add_empty_note">Bạn không thể thêm một ghi chú rỗng!</string>
     <string name="update_success">Cập nhật thành công!</string>
     <string name="congratulations_you_done_task">Chúc mừng bạn đã hoàn thành công việc này!</string>
+    <string name="alert">Thông báo:</string>
+    <string name="tasks">Công việc</string>
+    <string name="backpress">Nhấn quay lại một lần nữa để thoát!</string>
+    <string name="done">Xong</string>
+    <string name="not_yet">Chưa xong</string>
 </resources>

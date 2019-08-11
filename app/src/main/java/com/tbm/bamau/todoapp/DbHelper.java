@@ -88,6 +88,25 @@ public class DbHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Add Task Successfuly");
     }
 
+    public int addATask(Task task){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TASK_STATUS, task.getStatusTask());
+        values.put(NAME_TASK, task.getNameTask());
+        values.put(TIME_TASK, task.getTimeTask());
+        values.put(DAY_TASK, task.getDayTask());
+        values.put(MONTH_TASK, task.getMonthTask());
+        values.put(YEAR_TASK, task.getYearTask());
+        values.put(REPEAT_TASK, task.getRepeat());
+        values.put(TIME_REMINDER, task.getTimeReminder());
+        values.put(NOTE_TASK, task.getNote());
+        values.put(LINK_IMAGE, task.getLinkImage());
+        //Neu de null thi khi value bang null thi loi
+        long ID = db.insert(TASKTABLE,null,values);
+        db.close();
+        return (int) ID;
+    }
+
     /*
     Select a task by ID
      */
@@ -98,6 +117,23 @@ public class DbHelper extends SQLiteOpenHelper {
                         NAME_TASK, TIME_TASK, DAY_TASK, MONTH_TASK, YEAR_TASK, REPEAT_TASK,
                 TIME_REMINDER, NOTE_TASK, LINK_IMAGE}, TASK_ID + "=?",
                 new String[] { String.valueOf(id) },null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Task task = new Task(cursor.getInt(0),cursor.getInt(1),cursor.getString(2), cursor.getString(3),
+                cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7),
+                cursor.getString(8), cursor.getString(9), cursor.getString(10));
+        cursor.close();
+        db.close();
+        return task;
+    }
+
+    public Task getTaskByNameTask(String name){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TASKTABLE, new String[] { TASK_ID, TASK_STATUS,
+                        NAME_TASK, TIME_TASK, DAY_TASK, MONTH_TASK, YEAR_TASK, REPEAT_TASK,
+                        TIME_REMINDER, NOTE_TASK, LINK_IMAGE}, NAME_TASK + "=?",
+                new String[] { String.valueOf(name) },null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -319,7 +355,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return listTask;
     }
 
-    public List<Task> getListTaskWithStatusOrderByStatus(int status) {
+    public List<Task> getListTaskWithStatusOrderByTime(int status) {
         List<Task> listTask = new ArrayList<Task>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM ( SELECT * FROM "+TASKTABLE+" ORDER BY "+ TIME_TASK +") WHERE ("+TASK_STATUS+" LIKE'"+status+"%')",null);

@@ -7,14 +7,18 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -41,6 +45,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import static android.support.constraint.motion.MotionScene.TAG;
+import static com.tbm.bamau.todoapp.MainActivity.hideSoftKeyboard;
 
 public class AddNewTaskActivity extends AppCompatActivity {
 
@@ -50,14 +55,16 @@ public class AddNewTaskActivity extends AppCompatActivity {
     TextView due, setDate, setTime, setRepeat, reminders, addReminders, note, addNote, image, takePhoto, audio, addAudio ;
     EditText edtName, editNote;
     Button btnOk, btnCancel;
-    AlarmManager alarmManager;
-    Calendar calendar;
-
-    PendingIntent pendingIntent;
-
+    Calendar calendar = Calendar.getInstance();
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH);
     SimpleDateFormat tFormat = new SimpleDateFormat("KK:mm:a", Locale.ENGLISH);
     final String[] Repeat = { "No Repeat", "Every day", "Every week", "Every month", "Every year"};
+    final String[] Reminder = { "Due", "Before 5 minutes", "Before 10 minutes", "Before 15 minutes", "Before 20 minutes"};
+    AlarmManager alarmManager;
+    PendingIntent pendingIntent;
+
+    public static final String EXTRA_TASK_ID = "Task_ID";
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +74,8 @@ public class AddNewTaskActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        setupUI(findViewById(R.id.viewAdd));
         Initialization();
-        calendar =Calendar.getInstance();
 
         setDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,12 +89,11 @@ public class AddNewTaskActivity extends AppCompatActivity {
                         String[] cutTaskDate;
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                            Calendar c = Calendar.getInstance();
-                            c.set(Calendar.YEAR, year);
-                            c.set(Calendar.MONTH, month);
-                            c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                            c.setTimeZone(TimeZone.getDefault());
-                            task_date = dateFormat.format(c.getTime());
+                            calendar.set(Calendar.YEAR, year);
+                            calendar.set(Calendar.MONTH, month);
+                            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                            calendar.setTimeZone(TimeZone.getDefault());
+                            task_date = dateFormat.format(calendar.getTime());
                             cutTaskDate= task_date.split(" ");
                             setDate.setText(task_date);
                         }
@@ -105,11 +111,10 @@ public class AddNewTaskActivity extends AppCompatActivity {
 
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        Calendar c = Calendar.getInstance();
-                        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        c.set(Calendar.MINUTE, minute);
-                        c.setTimeZone(TimeZone.getDefault());
-                        String task_time = tFormat.format(c.getTime());
+                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        calendar.set(Calendar.MINUTE, minute);
+                        calendar.setTimeZone(TimeZone.getDefault());
+                        String task_time = tFormat.format(calendar.getTimeInMillis());
                         setTime.setText(task_time);
 
                     }
@@ -158,6 +163,38 @@ public class AddNewTaskActivity extends AppCompatActivity {
         addReminders.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(AddNewTaskActivity.this);
+                builder.setTitle("Pick a reminder");
+                builder.setItems(Reminder, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:{
+                                addReminders.setText(Reminder[0]);
+                                break;
+                            }
+                            case 1:{
+                                addReminders.setText(Reminder[1]);
+                                break;
+                            }
+                            case 2:{
+                                addReminders.setText(Reminder[2]);
+                                break;
+                            }
+                            case 3:{
+                                addReminders.setText(Reminder[3]);
+                                break;
+                            }
+                            case 4:{
+                                addReminders.setText(Reminder[4]);
+                                break;
+                            }
+
+                        }
+                    }
+                });
+                builder.create().show();
 
             }
         });
@@ -260,20 +297,12 @@ public class AddNewTaskActivity extends AppCompatActivity {
             year = cutDate[2];
         }
         String time = setTime.getText().toString().trim();
-
-        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        Intent newIntent = new Intent(this, AlarmReceiver.class);
-        String alertTitle = edtName.getText().toString();
-        newIntent.putExtra(getString(R.string.alert_title), alertTitle);
-        pendingIntent = PendingIntent.getBroadcast(this,0, newIntent, 0);
-
-        Time timeTask = null;
-        try {
-            timeTask = new Time(tFormat.parse(time).getTime());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        alarmManager.set(AlarmManager.RTC_WAKEUP, timeTask.getTime(), pendingIntent);
+//        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+//        Intent newIntent = new Intent(this, AlarmReceiver.class);
+//        String alertTitle = edtName.getText().toString();
+//        newIntent.putExtra(getString(R.string.alert_title), alertTitle);
+//        pendingIntent = PendingIntent.getBroadcast(this,0, newIntent, 0);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
         String repeat = setRepeat.getText().toString().trim();
         String timeReminder = addReminders.getText().toString().trim();
@@ -298,6 +327,13 @@ public class AddNewTaskActivity extends AppCompatActivity {
             }else {
                 Task task=createTask();
                 database.addTask(task);
+
+                alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+                Intent newIntent = new Intent(this, AlarmReceiver.class);
+                newIntent.putExtra(getString(R.string.alert_title), task.getNameTask());
+                pendingIntent = PendingIntent.getBroadcast(this,0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
                 Intent intent = new Intent(AddNewTaskActivity.this, MainActivity.class);
                 startActivity(intent);
                 Toast.makeText(this, R.string.add_success, Toast.LENGTH_SHORT).show();
@@ -309,4 +345,28 @@ public class AddNewTaskActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(AddNewTaskActivity.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

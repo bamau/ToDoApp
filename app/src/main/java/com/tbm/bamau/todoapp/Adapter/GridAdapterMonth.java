@@ -98,7 +98,7 @@ public class GridAdapterMonth extends ArrayAdapter {
                     view.setBackgroundColor(getContext().getResources().getColor(R.color.light_green));
                 }
                 arrayList.add(taskList.get(i).getNameTask());
-                Task_Number.setText(arrayList.size()+ " Tasks");
+                Task_Number.setText(arrayList.size()+ " Task");
             }
         }
         return view;

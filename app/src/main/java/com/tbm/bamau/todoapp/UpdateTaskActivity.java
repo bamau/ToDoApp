@@ -1,8 +1,10 @@
 package com.tbm.bamau.todoapp;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,7 +14,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -22,7 +26,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.tbm.bamau.todoapp.Models.Task;
+import com.tbm.bamau.todoapp.Notification.AlarmReceiver;
 
+import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,6 +37,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import static android.support.constraint.motion.MotionScene.TAG;
+import static com.tbm.bamau.todoapp.MainActivity.hideSoftKeyboard;
 
 public class UpdateTaskActivity extends AppCompatActivity {
 
@@ -39,11 +47,17 @@ public class UpdateTaskActivity extends AppCompatActivity {
     TextView due, setDate, setTime, setRepeat, reminders, addReminders, note, addNote, image, takePhoto;
     EditText edtName, editNote;
     Button btnOk, btnCancel;
+    Calendar calendar = Calendar.getInstance();
+
+    AlarmManager alarmManager;
+    PendingIntent pendingIntent;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH);
+    SimpleDateFormat tFormat = new SimpleDateFormat("KK:mm:a", Locale.ENGLISH);
 
     final String[] Repeat = { "No Repeat", "Every day", "Every week", "Every month", "Every year"};
 
+    public static final String EXTRA_TASK_ID = "Task_ID";
 
 
     @Override
@@ -55,6 +69,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         Initialization();
+        setupUI(findViewById(R.id.viewUpdate));
 
         Bundle bundle = getIntent().getExtras();
         final int idTask = bundle.getInt("ID",0);
@@ -67,7 +82,6 @@ public class UpdateTaskActivity extends AppCompatActivity {
         setDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
                 int year = calendar.get(Calendar.YEAR);
                 int month = calendar.get(Calendar.MONTH);
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -75,12 +89,11 @@ public class UpdateTaskActivity extends AppCompatActivity {
                         , new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        Calendar c = Calendar.getInstance();
-                        c.set(Calendar.YEAR, year);
-                        c.set(Calendar.MONTH, month);
-                        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        c.setTimeZone(TimeZone.getDefault());
-                        String task_date = dateFormat.format(c.getTime());
+                        calendar.set(Calendar.YEAR, year);
+                        calendar.set(Calendar.MONTH, month);
+                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        calendar.setTimeZone(TimeZone.getDefault());
+                        String task_date = dateFormat.format(calendar.getTime());
                         setDate.setText(task_date);
                     }
                 },year, month, day);
@@ -90,7 +103,6 @@ public class UpdateTaskActivity extends AppCompatActivity {
         setTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
                 int hours = calendar.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar.get(Calendar.MINUTE);
                 timePickerDialog = new TimePickerDialog(setTime.getContext(), R.style.Theme_AppCompat_DayNight_Dialog
@@ -98,12 +110,11 @@ public class UpdateTaskActivity extends AppCompatActivity {
 
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        Calendar c = Calendar.getInstance();
-                        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        c.set(Calendar.MINUTE, minute);
-                        c.setTimeZone(TimeZone.getDefault());
+                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        calendar.set(Calendar.MINUTE, minute);
+                        calendar.setTimeZone(TimeZone.getDefault());
                         SimpleDateFormat hFomart = new SimpleDateFormat("K:mm a", Locale.ENGLISH);
-                        String task_time = hFomart.format(c.getTime());
+                        String task_time = hFomart.format(calendar.getTimeInMillis());
                         setTime.setText(task_time);
 
                     }
@@ -199,8 +210,6 @@ public class UpdateTaskActivity extends AppCompatActivity {
 
 
     public Task createTaskWithOldId(int id) {
-
-
         int status = 0;
         String name = edtName.getText().toString().trim();
         String note;
@@ -232,6 +241,12 @@ public class UpdateTaskActivity extends AppCompatActivity {
                 Toast.makeText(UpdateTaskActivity.this, R.string.please_enter_character,Toast.LENGTH_SHORT).show();
             }else{
                 database.Update(task);
+
+                alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+                Intent newIntent = new Intent(this, AlarmReceiver.class);
+                newIntent.putExtra(getString(R.string.alert_title), task.getNameTask());
+                pendingIntent = PendingIntent.getBroadcast(this,0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
                 Intent intent = new Intent(UpdateTaskActivity.this, MainActivity.class);
                 startActivity(intent);
                 Toast.makeText(this, R.string.update_success, Toast.LENGTH_SHORT).show();
@@ -276,4 +291,29 @@ public class UpdateTaskActivity extends AppCompatActivity {
 
     }
 
+    public void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(UpdateTaskActivity.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

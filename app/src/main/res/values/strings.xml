@@ -69,5 +69,9 @@
     <string name="update_success">Update Success!</string>
     <string name="congratulations_you_done_task">Congratulations! You done task!</string>
     <string name="alert">Alert:</string>
-    <string name="title_msg">title</string>
+    <string name="title_msg" translatable="false">title</string>
+    <string name="tasks">Tasks</string>
+    <string name="backpress">Please press BACK again to exit!</string>
+    <string name="not_yet">Not yet</string>
+    <string name="done">Done</string>
 </resources>

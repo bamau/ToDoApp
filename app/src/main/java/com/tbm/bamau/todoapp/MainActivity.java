@@ -1,7 +1,9 @@
 package com.tbm.bamau.todoapp;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,13 +14,20 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.tbm.bamau.todoapp.Fragment.ViewDay_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewDoneTask_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewLaterTask_Fragment;
 import com.tbm.bamau.todoapp.Fragment.ViewMonth_Fragment;
 import com.tbm.bamau.todoapp.Models.Task;
+import com.tbm.bamau.todoapp.Notification.AlarmReceiver;
+import com.tbm.bamau.todoapp.Notification.BootReceiver;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,11 +42,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ViewMonth_Fragment.OnMessageReadListenerMonth, ViewDay_Fragment.OnMessageReadListenerDay {
 
 
+    private long backPressedTime;
+
     DbHelper database;
     FloatingActionButton floatingActionButton;
     private DrawerLayout drawer;
     Toolbar toolbar;
-    AlarmManager alarmManager;
+    private AlarmReceiver mAlarmReceiver;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
     Calendar calendar = Calendar.getInstance();
@@ -62,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
+        mAlarmReceiver = new AlarmReceiver();
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -96,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         list = database.getListTaskWithStatusOrderByYear(status);
         list = database.getListTaskWithStatusOrderByMonth(status);
         list = database.getListTaskWithStatusOrderByDay(status);
-        list = database.getListTaskWithStatusOrderByStatus(status);
+        list = database.getListTaskWithStatusOrderByTime(status);
         String lDay=null, lMonth=null, lYear=null, lDate=null;
         int check;
         for(int i =0 ; i< list.size(); i++){
@@ -121,16 +132,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         floatingActionButton = findViewById(R.id.fab);
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout);
-        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
     }
 
+    boolean twice = false;
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (backPressedTime + 2000 > System.currentTimeMillis()){
+                super.onBackPressed();
+                return;
+            }else{
+                Toast.makeText(getBaseContext(), R.string.backpress, Toast.LENGTH_SHORT).show();
+            }
+            backPressedTime = System.currentTimeMillis();
         }
     }
 
@@ -197,5 +214,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewDay_fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,viewDay_fragment).commit();
         getSupportActionBar().setTitle(R.string.day);
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 }
