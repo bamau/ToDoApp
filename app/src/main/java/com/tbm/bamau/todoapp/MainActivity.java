@@ -2,7 +2,9 @@ package com.tbm.bamau.todoapp;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        
         database = new DbHelper(this);
         Initialization();
         setSupportActionBar(toolbar);

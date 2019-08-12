@@ -74,4 +74,5 @@
     <string name="backpress">Please press BACK again to exit!</string>
     <string name="not_yet">Not yet</string>
     <string name="done">Done</string>
+    <string name="OK">OK</string>
 </resources>

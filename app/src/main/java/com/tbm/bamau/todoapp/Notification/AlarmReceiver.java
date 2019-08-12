@@ -91,13 +91,18 @@ public class AlarmReceiver extends BroadcastReceiver {
 //        AlertDialog alert = builder.create();
 //        alert.show();
 //        mediaPlayer.start();
-
-
         String Title = intent.getStringExtra(context.getString(R.string.alert_title));
         Intent x = new Intent(context, MusicNotification.class);
         x.putExtra(context.getString(R.string.alert_title), Title);
         x.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(x);
+
+//        ComponentName receiver = new ComponentName(context, BootReceiver.class);
+//        PackageManager pm = context.getPackageManager();
+//        pm.setComponentEnabledSetting(receiver,
+//                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+//                PackageManager.DONT_KILL_APP);
+
     }
 
 //    public void setAlarm(Context context, Calendar calendar, int ID) {

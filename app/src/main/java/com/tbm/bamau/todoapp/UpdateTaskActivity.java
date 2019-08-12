@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -33,6 +34,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -49,12 +51,15 @@ public class UpdateTaskActivity extends AppCompatActivity {
     Button btnOk, btnCancel;
     Calendar calendar = Calendar.getInstance();
 
+    int nowTime, currTime;
+    Date curDate, nowDate;
     AlarmManager alarmManager;
     PendingIntent pendingIntent;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH);
     SimpleDateFormat tFormat = new SimpleDateFormat("KK:mm:a", Locale.ENGLISH);
 
+    final String[] Reminder = { "Due", "Before 5 minutes", "Before 10 minutes", "Before 15 minutes", "Before 20 minutes"};
     final String[] Repeat = { "No Repeat", "Every day", "Every week", "Every month", "Every year"};
 
     public static final String EXTRA_TASK_ID = "Task_ID";
@@ -74,6 +79,12 @@ public class UpdateTaskActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         final int idTask = bundle.getInt("ID",0);
 
+        final String currentDate = dateFormat.format(calendar.getTime());
+        try {
+            curDate = formatDate(currentDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         database = new DbHelper(this);
         Log.d(TAG, "'"+idTask+"'");
         Task task = database.getTaskById(idTask);
@@ -94,12 +105,18 @@ public class UpdateTaskActivity extends AppCompatActivity {
                         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                         calendar.setTimeZone(TimeZone.getDefault());
                         String task_date = dateFormat.format(calendar.getTime());
+                        try {
+                            nowDate = formatDate(task_date);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         setDate.setText(task_date);
                     }
                 },year, month, day);
                 datePickerDialog.show();
             }
         });
+        currTime = (int) calendar.getTimeInMillis();
         setTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,8 +130,8 @@ public class UpdateTaskActivity extends AppCompatActivity {
                         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         calendar.set(Calendar.MINUTE, minute);
                         calendar.setTimeZone(TimeZone.getDefault());
-                        SimpleDateFormat hFomart = new SimpleDateFormat("K:mm a", Locale.ENGLISH);
-                        String task_time = hFomart.format(calendar.getTimeInMillis());
+                        String task_time = tFormat.format(calendar.getTimeInMillis());
+                        nowTime = (int) calendar.getTimeInMillis();
                         setTime.setText(task_time);
 
                     }
@@ -159,6 +176,47 @@ public class UpdateTaskActivity extends AppCompatActivity {
             }
         });
 
+        addReminders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(UpdateTaskActivity.this);
+                builder.setTitle("Pick a reminder");
+                builder.setItems(Reminder, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int h = calendar.get(Calendar.HOUR);
+                        int m = calendar.get(Calendar.MINUTE);
+                        switch (which) {
+                            case 0:{
+                                addReminders.setText(Reminder[0]);
+                                break;
+                            }
+                            case 1:{
+                                addReminders.setText(Reminder[1]);
+                                break;
+                            }
+                            case 2:{
+                                addReminders.setText(Reminder[2]);
+                                break;
+                            }
+                            case 3:{
+                                addReminders.setText(Reminder[3]);
+                                break;
+                            }
+                            case 4:{
+                                addReminders.setText(Reminder[4]);
+                                break;
+                            }
+
+                        }
+                    }
+                });
+                builder.create().show();
+
+            }
+        });
+
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,7 +244,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(editNote.getText().toString().trim().equals(""))
                     Toast.makeText(UpdateTaskActivity.this, R.string.you_can_not_add_empty_note, Toast.LENGTH_SHORT).show();
-                if(!addNote.getText().toString().trim().equals(R.string.add_a_note))
+                if(addNote.getText().toString().trim().equals(R.string.add_a_note))
                     addNote.setText(null);
                 addNote.setText(editNote.getText().toString().trim());
                 dialog.dismiss();
@@ -234,21 +292,36 @@ public class UpdateTaskActivity extends AppCompatActivity {
         int id = item.getItemId();
         Bundle bundle = getIntent().getExtras();
         int idTask = bundle.getInt("ID");
-        Task task = createTaskWithOldId(idTask);
         if (id == R.id.action_save) {
-            Log.d(TAG, "'"+task.getIdTask()+"'");
-            if(task.getNameTask().equals("")){
-                Toast.makeText(UpdateTaskActivity.this, R.string.please_enter_character,Toast.LENGTH_SHORT).show();
-            }else{
+            if(edtName.getText().toString().trim().equals("")) {
+                Toast.makeText(UpdateTaskActivity.this, R.string.please_enter_character, Toast.LENGTH_SHORT).show();
+            }else if(setDate.getText().toString().trim().equals(R.string.set_date)) {
+                Toast.makeText(UpdateTaskActivity.this, R.string.please_set_a_date, Toast.LENGTH_SHORT).show();
+            }else if(setTime.getText().toString().trim().equals(getString(R.string.set_time))) {
+                Toast.makeText(UpdateTaskActivity.this, R.string.please_set_a_time, Toast.LENGTH_SHORT).show();
+            }else if (curDate.compareTo(nowDate)>0){
+                Toast.makeText(UpdateTaskActivity.this, "Please set date bigger!", Toast.LENGTH_SHORT).show();
+            }else if (curDate.compareTo(nowDate)==0) {
+                if (nowTime == 0){
+                    Toast.makeText(UpdateTaskActivity.this, "Please set a time higher!", Toast.LENGTH_SHORT).show();
+                }else  if (currTime>nowTime){
+                    Toast.makeText(UpdateTaskActivity.this, "Please set a time higher!", Toast.LENGTH_SHORT).show();
+                }else if (currTime<nowTime){
+                    Task task = createTaskWithOldId(idTask);
+                    database.Update(task);
+                    setAlarm(UpdateTaskActivity.this,calendar,task.getNameTask());
+                    Intent intent = new Intent(UpdateTaskActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                    Toast.makeText(this, R.string.update_success, Toast.LENGTH_SHORT).show();
+                }
+            }else {
+                Task task = createTaskWithOldId(idTask);
                 database.Update(task);
-
-                alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-                Intent newIntent = new Intent(this, AlarmReceiver.class);
-                newIntent.putExtra(getString(R.string.alert_title), task.getNameTask());
-                pendingIntent = PendingIntent.getBroadcast(this,0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                setAlarm(UpdateTaskActivity.this,calendar,task.getNameTask());
                 Intent intent = new Intent(UpdateTaskActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
                 Toast.makeText(this, R.string.update_success, Toast.LENGTH_SHORT).show();
             }
         }
@@ -268,7 +341,13 @@ public class UpdateTaskActivity extends AppCompatActivity {
         month = task.getMonthTask();
         year = task.getYearTask();
         setDate.setText(day+" "+month+" "+year);
+        try {
+            nowDate = formatDate(day+" "+month+" "+year);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         setTime.setText(task.getTimeTask());
+
         setRepeat.setText(task.getRepeat());
         addReminders.setText(task.getTimeReminder());
         addNote.setText(task.getNote());
@@ -291,6 +370,13 @@ public class UpdateTaskActivity extends AppCompatActivity {
 
     }
 
+    public void setAlarm(Context context, Calendar calendar, String name){
+        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        Intent newIntent = new Intent(this, AlarmReceiver.class);
+        newIntent.putExtra(getString(R.string.alert_title), name);
+        pendingIntent = PendingIntent.getBroadcast(this,0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
     public void setupUI(View view) {
 
         // Set up touch listener for non-text box views to hide keyboard.
@@ -312,6 +398,10 @@ public class UpdateTaskActivity extends AppCompatActivity {
         }
     }
 
+    public Date formatDate (String date) throws ParseException {
+        Date fDate = dateFormat.parse(date);
+        return fDate;
+    }
     @Override
     public void onBackPressed() {
         finish();

@@ -97,14 +97,11 @@ public class MusicNotification extends AppCompatActivity{
                 startActivity(intent);
             }
         });
-        builder.setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                database.UpdateStatus(task);
                 dialog.cancel();
                 MusicNotification.this.finish();
-                Intent intent = new Intent(MusicNotification.this,MainActivity.class);
-                startActivity(intent);
             }
         });
         AlertDialog alert = builder.create();

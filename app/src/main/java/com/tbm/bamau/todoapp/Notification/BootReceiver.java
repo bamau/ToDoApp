@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.tbm.bamau.todoapp.AddNewTaskActivity;
 import com.tbm.bamau.todoapp.DbHelper;
 import com.tbm.bamau.todoapp.Models.Task;
 import com.tbm.bamau.todoapp.R;
@@ -71,12 +72,7 @@ public class BootReceiver extends BroadcastReceiver {
                 mCalendar.set(Calendar.MINUTE, mMinute);
                 mCalendar.set(Calendar.SECOND, 0);
 
-
-
-//                Intent newIntent = new Intent(get, AlarmReceiver.class);
-//                newIntent.putExtra(getString(R.string.alert_title), task.getIdTask());
-//                pendingIntent = PendingIntent.getBroadcast(this,0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                new AddNewTaskActivity().setAlarm(context,mCalendar,nameTask);
         }
         }
     }

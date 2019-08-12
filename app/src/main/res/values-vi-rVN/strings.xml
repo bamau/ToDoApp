@@ -65,4 +65,5 @@
     <string name="backpress">Nhấn quay lại một lần nữa để thoát!</string>
     <string name="done">Xong</string>
     <string name="not_yet">Chưa xong</string>
+    <string name="OK">Đồng ý</string>
 </resources>
