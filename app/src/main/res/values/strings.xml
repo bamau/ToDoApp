@@ -35,7 +35,7 @@
     <string name="add_new_task">Add new task</string>
     <string name="setting">Setting</string>
     <string name="ba_mau">Ba Mau</string>
-    <string name="to_do_app">To Do App</string>
+    <string name="to_do_app">To Do</string>
     <string name="add_new_note">Add new note</string>
     <string name="enter_note">Enter note...</string>
     <string name="ok">OK</string>
@@ -75,4 +75,6 @@
     <string name="not_yet">Not yet</string>
     <string name="done">Done</string>
     <string name="OK">OK</string>
+    <string name="please_set_a_date_higher">Please set date bigger!</string>
+    <string name="please_set_a_time_higher">Please set a time higher!</string>
 </resources>

@@ -26,12 +26,14 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.tbm.bamau.todoapp.Adapter.DoneTaskAdapter;
 import com.tbm.bamau.todoapp.Adapter.TaskAdapter;
 import com.tbm.bamau.todoapp.DbHelper;
 import com.tbm.bamau.todoapp.MainActivity;
 import com.tbm.bamau.todoapp.Models.Task;
 import com.tbm.bamau.todoapp.R;
 import com.tbm.bamau.todoapp.UpdateTaskActivity;
+import com.tbm.bamau.todoapp.ViewDetailTask;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,16 +49,17 @@ import static com.tbm.bamau.todoapp.MainActivity.hideSoftKeyboard;
 public class ViewDay_Fragment extends Fragment {
 
     TaskAdapter taskAdapter;
+    DoneTaskAdapter taskAdapterDone;
     DbHelper database;
-    SwipeMenuListView listTask;
+    SwipeMenuListView listTask, listTaskDone;
     List<Task> arrayList;
-    ImageButton nextButton, previousButton;
-    TextView currentDate;
+    List<Task> arrayListDone;
 
     Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH);
     OnMessageReadListenerDay onMessageReadListenerDay;
 
+    String curentDate = dateFormat.format(calendar.getTime());
 
     public interface OnMessageReadListenerDay{
         public void onMessageReadDay(CharSequence input);
@@ -67,40 +70,45 @@ public class ViewDay_Fragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.viewday_fragment, container, false);
 
-        String currDate = dateFormat.format(calendar.getTime());
 
         Initialization(view);
         setupAdapter(view);
+        setupAdapterDone(view);
         setupUI(view);
         Bundle bundle = getArguments();
         if (bundle != null){
             String date =bundle.getString("CHANGE_DATE");
             getListTaskOneDate(date, 0);
+            getListDoneTaskOneDate(date,1);
         }
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            String cDate;
-            @Override
-            public void onClick(View v) {
-                calendar.add(calendar.DAY_OF_MONTH,1);
-                cDate = dateFormat.format(calendar.getTime());
-                currentDate.setText(cDate);
-                updateListTaskWithChangeDate(cDate,0);
-            }
-        });
-
-         previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calendar.add(calendar.DAY_OF_MONTH,-1);
-                String cDate = dateFormat.format(calendar.getTime());
-                currentDate.setText(cDate);
-                updateListTaskWithChangeDate(cDate,0);
-            }
-        });
-
+        getListTaskOneDate(curentDate, 0);
+        getListDoneTaskOneDate(curentDate,1);
         return view;
     }
 
+    private void getListDoneTaskOneDate(String day, int status) {
+        database = new DbHelper(getActivity());
+        if (arrayListDone != null)
+            arrayListDone.clear();
+        String[] cutDay = day.split(" ");
+        arrayListDone=database.getListTaskWithDay(cutDay[0],cutDay[1],cutDay[2],status);
+        taskAdapterDone = new DoneTaskAdapter(getActivity(),R.layout.item_task_done, arrayListDone);
+        listTaskDone.setAdapter(taskAdapterDone);
+        try {
+            Date date = dateFormat.parse(day);
+            calendar.setTime(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if(taskAdapterDone!= null){
+            taskAdapterDone.notifyDataSetChanged();
+        }
+    }
+
+    public Date formatDate (String date) throws ParseException {
+        Date fDate = dateFormat.parse(date);
+        return fDate;
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -120,11 +128,9 @@ public class ViewDay_Fragment extends Fragment {
 
     private void Initialization (View view){
         listTask = view.findViewById(R.id.listView);
-        nextButton = view.findViewById(R.id.nextBtn);
-        previousButton = view.findViewById(R.id.previousBtn);
-        currentDate = view.findViewById(R.id.currentDate);
+        listTaskDone = view.findViewById(R.id.swipelistview);
     }
-    private void setupAdapter(View view) {
+    public void setupAdapter(View view) {
         SwipeMenuCreator creator = new SwipeMenuCreator() {
             @Override
             public void create(SwipeMenu menu) {
@@ -180,6 +186,7 @@ public class ViewDay_Fragment extends Fragment {
                         database.UpdateStatus(task);
                         Toast.makeText(getContext(), R.string.congratulations_you_done_task, Toast.LENGTH_LONG).show();
                         updateListTask();
+                        updateListDoneTask();
                         // complete
                         break;
                     case 1:
@@ -192,11 +199,59 @@ public class ViewDay_Fragment extends Fragment {
         });
     }
 
+    public void setupAdapterDone(View view) {
+        SwipeMenuCreator creatorDone = new SwipeMenuCreator() {
+            @Override
+            public void create(SwipeMenu menuDone) {
+                // create "delete" item
+                SwipeMenuItem deleteItemDone = new SwipeMenuItem
+                        (getContext().getApplicationContext());
+                // set item background
+                deleteItemDone.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                        0x3F, 0x25)));
+                // set item width
+                deleteItemDone.setWidth(150);
+                // set a icon
+                deleteItemDone.setIcon(R.drawable.ic_delete_black_24dp);
+                // add to menu
+                menuDone.addMenuItem(deleteItemDone);
+            }
+        };
+//        // set creator
+        listTaskDone.setMenuCreator(creatorDone);
+        listTaskDone.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Task task = arrayListDone.get(position);
+                int idTask = task.getIdTask();
+                Intent intent = new Intent(getContext(), ViewDetailTask.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("ID",idTask);
+                intent.putExtras(bundle);
+                startActivity(intent);
+
+            }
+        });
+        listTaskDone.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                int id = arrayListDone.get(position).getIdTask();
+                switch (index) {
+                    case 0:
+                        // delete
+                        DialogXoaDoneTask(id);
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+
     public void updateListTask(){
         database = new DbHelper(getActivity());
         Calendar calendar = Calendar.getInstance();
         String currentDay = dateFormat.format(calendar.getTime());
-        currentDate.setText(currentDay);
         if (arrayList != null)
             arrayList.clear();
         String[] cutDay = currentDay.split(" ");
@@ -205,6 +260,21 @@ public class ViewDay_Fragment extends Fragment {
         listTask.setAdapter(taskAdapter);
         if(taskAdapter!= null){
             taskAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void updateListDoneTask(){
+        database = new DbHelper(getActivity());
+        Calendar calendar = Calendar.getInstance();
+        String currentDay = dateFormat.format(calendar.getTime());
+        if (arrayListDone != null)
+            arrayListDone.clear();
+        String[] cutDay = currentDay.split(" ");
+        arrayListDone=database.getListTaskWithDay(cutDay[0],cutDay[1],cutDay[2],1);
+        taskAdapterDone = new DoneTaskAdapter(getActivity(),R.layout.item_task_done, arrayListDone);
+        listTaskDone.setAdapter(taskAdapterDone);
+        if(taskAdapterDone!= null){
+            taskAdapterDone.notifyDataSetChanged();
         }
     }
 
@@ -220,10 +290,21 @@ public class ViewDay_Fragment extends Fragment {
             taskAdapter.notifyDataSetChanged();
         }
     }
+    public void updateListTaskDoneWithChangeDate(String day, int status){
+        database = new DbHelper(getActivity());
+        if (arrayListDone != null)
+            arrayListDone.clear();
+        String[] cutDay = day.split(" ");
+        arrayListDone=database.getListTaskWithDay(cutDay[0],cutDay[1],cutDay[2],status);
+        taskAdapterDone = new DoneTaskAdapter(getActivity(),R.layout.item_task_done, arrayListDone);
+        listTaskDone.setAdapter(taskAdapterDone);
+        if(taskAdapterDone!= null){
+            taskAdapterDone.notifyDataSetChanged();
+        }
+    }
 
     public void getListTaskOneDate(String day, int status){
 
-        currentDate.setText(day);
         database = new DbHelper(getActivity());
         if (arrayList != null)
             arrayList.clear();
@@ -242,7 +323,26 @@ public class ViewDay_Fragment extends Fragment {
         }
     }
 
-    private void DialogXoaTask(final int id){
+    public void getListTaskDoneOneDate(String day, int status){
+
+        database = new DbHelper(getActivity());
+        if (arrayListDone != null)
+            arrayListDone.clear();
+        String[] cutDay = day.split(" ");
+        arrayListDone=database.getListTaskWithDay(cutDay[0],cutDay[1],cutDay[2],status);
+        taskAdapterDone = new DoneTaskAdapter(getActivity(),R.layout.item_task_done, arrayListDone);
+        listTaskDone.setAdapter(taskAdapterDone);
+        try {
+            Date date = dateFormat.parse(day);
+            calendar.setTime(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if(taskAdapterDone!= null){
+            taskAdapterDone.notifyDataSetChanged();
+        }
+    }
+    public void DialogXoaTask(final int id){
         final String cDate = dateFormat.format(calendar.getTime());
         AlertDialog.Builder dialogXoa = new AlertDialog.Builder(getContext());
         dialogXoa.setMessage(R.string.do_you_want_delete_this_task);
@@ -252,6 +352,25 @@ public class ViewDay_Fragment extends Fragment {
                 database.deleteTask(database.getTaskById(id));
                 Toast.makeText(getContext(), R.string.delete_success, Toast.LENGTH_SHORT).show();
                 updateListTaskWithChangeDate(cDate,0);
+            }
+        });
+        dialogXoa.setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        dialogXoa.show();
+    }
+    public void DialogXoaDoneTask(final int id){
+        final String cDate = dateFormat.format(calendar.getTime());
+        AlertDialog.Builder dialogXoa = new AlertDialog.Builder(getContext());
+        dialogXoa.setMessage(R.string.do_you_want_delete_this_task);
+        dialogXoa.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                database.deleteTask(database.getTaskById(id));
+                Toast.makeText(getContext(), R.string.delete_success, Toast.LENGTH_SHORT).show();
+                updateListTaskDoneWithChangeDate(cDate,1);
             }
         });
         dialogXoa.setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {

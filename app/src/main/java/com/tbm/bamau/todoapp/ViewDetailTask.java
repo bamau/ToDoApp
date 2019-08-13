@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
@@ -84,13 +85,22 @@ public class ViewDetailTask extends AppCompatActivity {
         addNote.setText(task.getNote());
         takePhoto.setText(task.getLinkImage());
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings, menu);
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id==android.R.id.home){
+        if (id == R.id.view_setting) {
+            Intent intent = new Intent(ViewDetailTask.this, SettingActivity.class);
+            startActivity(intent);
+        }if(id==android.R.id.home){
             this.finish();
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

@@ -21,31 +21,44 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.tbm.bamau.todoapp.Adapter.LaterTaskAdapter;
 import com.tbm.bamau.todoapp.Adapter.TaskAdapter;
 import com.tbm.bamau.todoapp.DbHelper;
 import com.tbm.bamau.todoapp.Models.Task;
 import com.tbm.bamau.todoapp.R;
 import com.tbm.bamau.todoapp.UpdateTaskActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import static com.tbm.bamau.todoapp.MainActivity.hideSoftKeyboard;
 
 public class ViewLaterTask_Fragment extends Fragment {
 
-    TaskAdapter taskAdapter;
+    LaterTaskAdapter taskAdapterLater;
     DbHelper database;
-    SwipeMenuListView listTask;
-    List<Task> arrayList;
+    SwipeMenuListView listTaskLater;
+    List<Task> arrayListLater;
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy", Locale.ENGLISH);
+    String currentDate = dateFormat.format(calendar.getTime());
+    OnMessageReadListenerLater onMessageReadListenerLater;
+
+    public interface OnMessageReadListenerLater{
+        public void onMessageReadLater(CharSequence input);
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.viewlatertask_fragment, container, false);
 
-        listTask = view.findViewById(R.id.swipelistview);
+        listTaskLater = view.findViewById(R.id.swipelistview);
         setupAdapter(view);
-        updateListTaskWithChangeStatus(2);
+        String[] cutMonth = currentDate.split(" ");
+        getListLaterTaskOneMonth(cutMonth[0],cutMonth[1],2);
         setupUI(view);
         return view;
     }
@@ -69,12 +82,12 @@ public class ViewLaterTask_Fragment extends Fragment {
             }
         };
 //        // set creator
-        listTask.setMenuCreator(creator);
-        listTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listTaskLater.setMenuCreator(creator);
+        listTaskLater.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Task task = arrayList.get(position);
+                Task task = arrayListLater.get(position);
                 int idTask = task.getIdTask();
                 Intent intent = new Intent(getContext(), UpdateTaskActivity.class);
                 intent.putExtra("ID",idTask);
@@ -82,14 +95,14 @@ public class ViewLaterTask_Fragment extends Fragment {
 
             }
         });
-        listTask.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+        listTaskLater.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                int id = arrayList.get(position).getIdTask();
+                int id = arrayListLater.get(position).getIdTask();
                 switch (index) {
                     case 0:
                         // delete
-                        DialogXoaDoneTask(id);
+                        DialogXoaLaterTask(id);
                         break;
                 }
                 return false;
@@ -97,22 +110,34 @@ public class ViewLaterTask_Fragment extends Fragment {
         });
     }
 
+    public void getListLaterTaskOneMonth(String month, String year, int status){
+
+        database = new DbHelper(getActivity());
+        if (arrayListLater != null)
+            arrayListLater.clear();
+        arrayListLater=database.getListLaterTaskOneMonth(month,year,status);
+        taskAdapterLater = new LaterTaskAdapter(getActivity(),R.layout.item_task_later, arrayListLater);
+        listTaskLater.setAdapter(taskAdapterLater);
+        if(taskAdapterLater!= null){
+            taskAdapterLater.notifyDataSetChanged();
+        }
+    }
     public void updateListTaskWithChangeStatus(int status){
         database = new DbHelper(getActivity());
-        if (arrayList != null)
-            arrayList.clear();
-        arrayList=database.getListTaskWithStatusOrderByYear(status);
-        arrayList=database.getListTaskWithStatusOrderByMonth(status);
-        arrayList=database.getListTaskWithStatusOrderByDay(status);
-        arrayList=database.getListTaskWithStatusOrderByTime(status);
-        taskAdapter = new TaskAdapter(getActivity(),R.layout.item_task, arrayList);
-        listTask.setAdapter(taskAdapter);
-        if(taskAdapter!= null){
-            taskAdapter.notifyDataSetChanged();
+        if (arrayListLater != null)
+            arrayListLater.clear();
+        arrayListLater=database.getListTaskWithStatusOrderByYear(status);
+        arrayListLater=database.getListTaskWithStatusOrderByMonth(status);
+        arrayListLater=database.getListTaskWithStatusOrderByDay(status);
+        arrayListLater=database.getListTaskWithStatusOrderByTime(status);
+        taskAdapterLater = new LaterTaskAdapter(getActivity(),R.layout.item_task_later, arrayListLater);
+        listTaskLater.setAdapter(taskAdapterLater);
+        if(taskAdapterLater!= null){
+            taskAdapterLater.notifyDataSetChanged();
         }
     }
 
-    private void DialogXoaDoneTask(final int id){
+    private void DialogXoaLaterTask(final int id){
         AlertDialog.Builder dialogXoa = new AlertDialog.Builder(getContext());
         dialogXoa.setMessage(R.string.do_you_want_delete_this_task);
         dialogXoa.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {

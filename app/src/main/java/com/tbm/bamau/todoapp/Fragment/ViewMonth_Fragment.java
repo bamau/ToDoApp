@@ -28,6 +28,7 @@ import com.tbm.bamau.todoapp.Models.Task;
 import com.tbm.bamau.todoapp.R;
 import com.tbm.bamau.todoapp.UpdateTaskActivity;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,59 +40,42 @@ import static com.tbm.bamau.todoapp.MainActivity.hideSoftKeyboard;
 
 public class ViewMonth_Fragment extends Fragment {
 
-    private static final int MAX_CALENDAR_DAYS = 42;
-    ImageButton nextButton, previousButton;
-    TextView currentDate;
+    private static final int MAX_CALENDAR_DAYS = 49;
     GridView gridView;
     DbHelper database;
     GridAdapterMonth gridAdapter;
     OnMessageReadListenerMonth onMessageReadListenerMonth;
 
     Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy",Locale.ENGLISH);
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy",Locale.ENGLISH);
     SimpleDateFormat dateTaskFormat = new SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH);
     SimpleDateFormat monthFormat = new SimpleDateFormat("MMM",Locale.ENGLISH);
     SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy",Locale.ENGLISH);
+    String currentDate = dateFormat.format(calendar.getTime());
 
     List<Date> dates = new ArrayList<>();
     List<Task> taskList= new ArrayList<>();
-
 
     public interface OnMessageReadListenerMonth{
         public void onMessageReadMonth(CharSequence input);
     }
 
-
-
         @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.viewmonth_fragment, container, false);
-        nextButton = view.findViewById(R.id.nextBtn);
-        previousButton = view.findViewById(R.id.previousBtn);
-        currentDate = view.findViewById(R.id.currentDate);
         gridView = view.findViewById(R.id.gridview);
         database = new DbHelper(getActivity());
 
         setupUI(view);
-        String currentDate = dateFormat.format(calendar.getTime());
+
+        Bundle bundle = getArguments();
+        if (bundle !=null){
+            String currDate = bundle.getString("CHANGE_DATE");
+                setUpCalendarWithCurrentDate(currDate);
+        }
         setUpCalendarWithCurrentDate(currentDate);
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calendar.add(calendar.MONTH,1);
-                setUpCalendar();
-            }
-        });
-
-        previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calendar.add(calendar.MONTH,-1);
-                setUpCalendar();
-            }
-        });
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -124,9 +108,8 @@ public class ViewMonth_Fragment extends Fragment {
         onMessageReadListenerMonth = null;
     }
 
-    private void setUpCalendar() {
+    public void setUpCalendar() {
         String cDate = dateFormat.format(calendar.getTime());
-        currentDate.setText(cDate);
         dates.clear();
         Calendar monthCalendar = (Calendar) calendar.clone();
         monthCalendar.set(Calendar.DAY_OF_MONTH,1);
@@ -142,10 +125,13 @@ public class ViewMonth_Fragment extends Fragment {
         gridView.setAdapter(gridAdapter);
     }
 
-    private void setUpCalendarWithCurrentDate(String date) {
-        Calendar calendar = Calendar.getInstance();
+    public void setUpCalendarWithCurrentDate(String date) {
+        try {
+            calendar.setTime(formatDate(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         date = dateFormat.format(calendar.getTime());
-        currentDate.setText(date);
         dates.clear();
         Calendar monthCalendar = (Calendar) calendar.clone();
         monthCalendar.set(Calendar.DAY_OF_MONTH,1);
@@ -161,12 +147,16 @@ public class ViewMonth_Fragment extends Fragment {
         gridView.setAdapter(gridAdapter);
     }
 
+    private Date formatDate (String date) throws ParseException {
+        Date fDate = dateFormat.parse(date);
+        return fDate;
+    }
 
-    private void CollectTaskPerMonth (String month, String year){
+    public void CollectTaskPerMonth (String month, String year){
         taskList.clear();
         database = new DbHelper(getActivity());
         SQLiteDatabase db =  database.getReadableDatabase();
-        Cursor cursor = database.readTaskPerMonth(month,year, 0,db);
+        Cursor cursor = database.readTaskPerMonth(month,year, 0,1,db);
         while (cursor.moveToNext()){
             String nameTask = cursor.getString(cursor.getColumnIndex(DBStructure.NAME_TASK));
             int idTask = cursor.getInt(cursor.getColumnIndex(DBStructure.TASK_ID));

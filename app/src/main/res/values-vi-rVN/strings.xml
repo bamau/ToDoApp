@@ -66,4 +66,6 @@
     <string name="done">Xong</string>
     <string name="not_yet">Chưa xong</string>
     <string name="OK">Đồng ý</string>
+    <string name="please_set_a_date_higher">Vui lòng đặt ngày cao hơn!</string>
+    <string name="please_set_a_time_higher">Vui lòng đặt thời gian cao hơn!</string>
 </resources>

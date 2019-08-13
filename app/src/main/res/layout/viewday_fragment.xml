@@ -1,51 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/viewDay"
+    android:background="@color/gray1"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
   <include layout="@layout/app_bar_main"/>
-
-    <LinearLayout
-        android:orientation="horizontal"
+  <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+    <TextView
+        android:background="@color/dark_green"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="15sp"
+        android:gravity="start"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
-        <ImageButton
-            android:id="@+id/previousBtn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/ic_previous"
-            android:layout_margin="5dp"/>
-        <TextView
-            android:id="@+id/currentDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_margin="10dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:text="Current Date"
-            android:layout_weight="3"
-            android:textColor="#666363"/>
-
-        <ImageButton
-            android:id="@+id/nextBtn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/ic_next"
-            android:layout_margin="5dp"/>
-
-    </LinearLayout>
+        android:text="Doing Tasks"/>
 
     <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/listView"
-        android:paddingLeft="10dp"
-        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
     </com.baoyz.swipemenulistview.SwipeMenuListView>
+    <TextView
+        android:background="@color/dark_green"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="15sp"
+        android:gravity="end"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Done Tasks"/>
+
+    <com.baoyz.swipemenulistview.SwipeMenuListView
+        android:id="@+id/swipelistview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </com.baoyz.swipemenulistview.SwipeMenuListView>
+
+  </LinearLayout>
 </LinearLayout>

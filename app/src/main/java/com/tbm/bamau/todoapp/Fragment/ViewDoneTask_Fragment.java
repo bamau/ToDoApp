@@ -21,6 +21,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.tbm.bamau.todoapp.Adapter.DoneTaskAdapter;
 import com.tbm.bamau.todoapp.Adapter.TaskAdapter;
 import com.tbm.bamau.todoapp.DbHelper;
 import com.tbm.bamau.todoapp.Models.Task;
@@ -28,16 +29,27 @@ import com.tbm.bamau.todoapp.R;
 import com.tbm.bamau.todoapp.UpdateTaskActivity;
 import com.tbm.bamau.todoapp.ViewDetailTask;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import static com.tbm.bamau.todoapp.MainActivity.hideSoftKeyboard;
 
 public class ViewDoneTask_Fragment extends Fragment {
 
-    TaskAdapter taskAdapter;
+    DoneTaskAdapter taskAdapterDone;
     DbHelper database;
-    SwipeMenuListView listTask;
-    List<Task> arrayList;
+    SwipeMenuListView listTaskDone;
+    List<Task> arrayListDone;
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy", Locale.ENGLISH);
+    String currentDate = dateFormat.format(calendar.getTime());
+    OnMessageReadListenerDone onMessageReadListenerDone;
+
+    public interface OnMessageReadListenerDone{
+        public void onMessageReadDone(CharSequence input);
+    }
 
     @Nullable
     @Override
@@ -45,9 +57,10 @@ public class ViewDoneTask_Fragment extends Fragment {
         View view = inflater.inflate(R.layout.viewdonetask_fragment, container, false);
 
         setupUI(view);
-        listTask = view.findViewById(R.id.swipelistview);
+        listTaskDone = view.findViewById(R.id.swipelistview);
         setupAdapter(view);
-        updateListTaskWithChangeStatus(1);
+        String[] cutMonth = currentDate.split(" ");
+        getListDoneTaskOneMonth(cutMonth[0],cutMonth[1],1);
         return view;
     }
 
@@ -70,12 +83,12 @@ public class ViewDoneTask_Fragment extends Fragment {
             }
         };
 //        // set creator
-        listTask.setMenuCreator(creator);
-        listTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listTaskDone.setMenuCreator(creator);
+        listTaskDone.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Task task = arrayList.get(position);
+                Task task = arrayListDone.get(position);
                 int idTask = task.getIdTask();
                 Intent intent = new Intent(getContext(), ViewDetailTask.class);
                 intent.putExtra("ID",idTask);
@@ -83,10 +96,10 @@ public class ViewDoneTask_Fragment extends Fragment {
 
             }
         });
-        listTask.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+        listTaskDone.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                int id = arrayList.get(position).getIdTask();
+                int id = arrayListDone.get(position).getIdTask();
                 switch (index) {
                     case 0:
                         // delete
@@ -98,18 +111,30 @@ public class ViewDoneTask_Fragment extends Fragment {
         });
     }
 
+    public  void getListDoneTaskOneMonth(String month, String year, int status){
+        database = new DbHelper(getActivity());
+        if (arrayListDone != null)
+            arrayListDone.clear();
+        arrayListDone=database.getListDoneTaskOneMonth(month,year,status);
+        taskAdapterDone = new DoneTaskAdapter(getActivity(),R.layout.item_task_done, arrayListDone);
+        listTaskDone.setAdapter(taskAdapterDone);
+        if(taskAdapterDone!= null){
+            taskAdapterDone.notifyDataSetChanged();
+        }
+    }
+
     public void updateListTaskWithChangeStatus(int status){
         database = new DbHelper(getActivity());
-        if (arrayList != null)
-            arrayList.clear();
-        arrayList=database.getListTaskWithStatusOrderByYear(status);
-        arrayList=database.getListTaskWithStatusOrderByMonth(status);
-        arrayList=database.getListTaskWithStatusOrderByDay(status);
-        arrayList=database.getListTaskWithStatusOrderByTime(status);
-        taskAdapter = new TaskAdapter(getActivity(),R.layout.item_task, arrayList);
-        listTask.setAdapter(taskAdapter);
-        if(taskAdapter!= null){
-            taskAdapter.notifyDataSetChanged();
+        if (arrayListDone != null)
+            arrayListDone.clear();
+        arrayListDone=database.getListTaskWithStatusOrderByYear(status);
+        arrayListDone=database.getListTaskWithStatusOrderByMonth(status);
+        arrayListDone=database.getListTaskWithStatusOrderByDay(status);
+        arrayListDone=database.getListTaskWithStatusOrderByTime(status);
+        taskAdapterDone = new DoneTaskAdapter(getActivity(),R.layout.item_task_done, arrayListDone);
+        listTaskDone.setAdapter(taskAdapterDone);
+        if(taskAdapterDone!= null){
+            taskAdapterDone.notifyDataSetChanged();
         }
     }
 

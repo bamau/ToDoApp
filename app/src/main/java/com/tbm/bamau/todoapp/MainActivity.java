@@ -21,6 +21,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tbm.bamau.todoapp.Fragment.ViewDay_Fragment;
@@ -41,20 +44,28 @@ import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        ViewMonth_Fragment.OnMessageReadListenerMonth, ViewDay_Fragment.OnMessageReadListenerDay {
+        ViewMonth_Fragment.OnMessageReadListenerMonth, ViewDay_Fragment.OnMessageReadListenerDay,
+        ViewLaterTask_Fragment.OnMessageReadListenerLater, ViewDoneTask_Fragment.OnMessageReadListenerDone {
 
 
     private long backPressedTime;
-
+    TextView curDay;
     DbHelper database;
     FloatingActionButton floatingActionButton;
     private DrawerLayout drawer;
     Toolbar toolbar;
+    FrameLayout frameLayout;
+    Calendar calendar = Calendar.getInstance();
     private AlarmReceiver mAlarmReceiver;
+    ImageButton nextButton, previousButton;
+    TextView currentDate;
+    int check;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-    Calendar calendar = Calendar.getInstance();
-    final  String currentDate = dateFormat.format(calendar.getTime());
+    SimpleDateFormat monthFormat = new SimpleDateFormat("MMM yyyy",Locale.ENGLISH);
+    final  String currDate = dateFormat.format(calendar.getTime());
+    final  String currDay = dateFormat.format(calendar.getTime());
+    final  String mDay = monthFormat.format(calendar.getTime());
 
     ViewDay_Fragment viewDay_fragment = new ViewDay_Fragment();
     ViewMonth_Fragment viewMonth_fragment = new ViewMonth_Fragment();
@@ -65,13 +76,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
         database = new DbHelper(this);
         Initialization();
+        String[] cutDay =dateFormat.format(calendar.getTime()).split(" ");
+        curDay.setText(cutDay[0]);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.day);
+        currentDate.setText(currDate);
         try {
-            checkListWithDate(0,currentDate);
+            checkListWithDate(0,currDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -83,6 +95,76 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            String cDate, mDate, lDate, dDate;
+            @Override
+            public void onClick(View v) {
+                if (check==0){
+                    calendar.add(calendar.DAY_OF_MONTH,1);
+                    cDate = dateFormat.format(calendar.getTime());
+                    currentDate.setText(cDate);
+                    viewDay_fragment.updateListTaskWithChangeDate(cDate,0);
+                    viewDay_fragment.updateListTaskDoneWithChangeDate(cDate,1);
+                }
+                if (check==1){
+                    calendar.add(calendar.MONTH,1);
+                    mDate = monthFormat.format(calendar.getTime());
+                    currentDate.setText(mDate);
+                    viewMonth_fragment.setUpCalendarWithCurrentDate(mDate);
+                }
+                if(check == 2){
+                    calendar.add(calendar.MONTH,1);
+                    dDate = monthFormat.format(calendar.getTime());
+                    currentDate.setText(dDate);
+                    String[] cutMonth = dDate.split(" ");
+                    viewDoneTask_fragment.getListDoneTaskOneMonth(cutMonth[0],cutMonth[1],1);
+                }
+                if(check == 3){
+                    calendar.add(calendar.MONTH,1);
+                    lDate = monthFormat.format(calendar.getTime());
+                    currentDate.setText(lDate);
+                    String[] cutMonth = lDate.split(" ");
+                    viewLaterTask_fragment.getListLaterTaskOneMonth(cutMonth[0],cutMonth[1],2);
+                }
+            }
+        });
+
+        previousButton.setOnClickListener(new View.OnClickListener() {
+            String cDate, mDate, lDate, dDate;
+            @Override
+            public void onClick(View v) {
+                if (check==0){
+                    calendar.add(calendar.DAY_OF_MONTH,-1);
+                   cDate = dateFormat.format(calendar.getTime());
+                    currentDate.setText(cDate);
+                    viewDay_fragment.updateListTaskWithChangeDate(cDate,0);
+                    viewDay_fragment.updateListTaskDoneWithChangeDate(cDate,1);
+                }
+                if (check==1){
+                    calendar.add(calendar.MONTH,-1);
+                    mDate = monthFormat.format(calendar.getTime());
+                    currentDate.setText(mDate);
+                    viewMonth_fragment.setUpCalendarWithCurrentDate(mDate);
+                }
+                if(check == 2){
+                    calendar.add(calendar.MONTH,-1);
+                    dDate = monthFormat.format(calendar.getTime());
+                    currentDate.setText(dDate);
+                    String[] cutMonth = dDate.split(" ");
+                    viewDoneTask_fragment.getListDoneTaskOneMonth(cutMonth[0],cutMonth[1],1);
+                }
+                if(check == 3){
+                    calendar.add(calendar.MONTH,-1);
+                    lDate = monthFormat.format(calendar.getTime());
+                    currentDate.setText(lDate);
+                    String[] cutMonth = lDate.split(" ");
+                    viewLaterTask_fragment.getListLaterTaskOneMonth(cutMonth[0],cutMonth[1],2);
+                }
+            }
+        });
+
+
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,12 +175,60 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(savedInstanceState == null){
             Bundle bundle = new Bundle();
-            bundle.putString("CHANGE_DATE", currentDate);
+            bundle.putString("CHANGE_DATE", currDate);
             viewDay_fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    viewDay_fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, viewDay_fragment).commit();
+            check=0;
             navigationView.setCheckedItem(R.id.nav_day);
         }
+
+        frameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (check==0){
+                    currentDate.setText(currDay);
+                    try {
+                        calendar.setTime(formatDate(currDay));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    viewDay_fragment.getListTaskOneDate(currDay,0);
+                    viewDay_fragment.getListTaskDoneOneDate(currDay,1);
+                }
+                if (check==1){
+                    currentDate.setText(mDay);
+                    try {
+                        calendar.setTime(formatDate(currDay));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, viewMonth_fragment).commit();
+                    viewMonth_fragment.setUpCalendarWithCurrentDate(mDay);
+                }
+                if (check==2){
+                    currentDate.setText(mDay);
+                    String[] cutmDay=mDay.split(" ");
+                    try {
+                        calendar.setTime(formatDate(currDay));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, viewDoneTask_fragment).commit();
+                    viewDoneTask_fragment.getListDoneTaskOneMonth(cutmDay[0],cutmDay[1],1);
+                }
+                if (check==3){
+                    currentDate.setText(mDay);
+                    String[] cutmDay=mDay.split(" ");
+                    try {
+                        calendar.setTime(formatDate(currDay));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, viewLaterTask_fragment).commit();
+                    viewLaterTask_fragment.getListLaterTaskOneMonth(cutmDay[0],cutmDay[1],2);
+                }
+            }
+        });
 
     }
 
@@ -129,11 +259,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Date fDate = dateFormat.parse(date);
         return fDate;
     }
-
+    private Date formatMonth (String date) throws ParseException {
+        Date fDate = monthFormat.parse(date);
+        return fDate;
+    }
     public void Initialization(){
+        nextButton = findViewById(R.id.nextBtn);
+        previousButton = findViewById(R.id.previousBtn);
+        currentDate = findViewById(R.id.currentDate);
+        curDay = findViewById(R.id.curDay);
         floatingActionButton = findViewById(R.id.fab);
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout);
+        frameLayout = findViewById(R.id.frameCurrentday);
     }
 
     boolean twice = false;
@@ -154,22 +292,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.settings, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.view_setting) {
-            Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -177,27 +299,61 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_day) {
-            Bundle bundle = new Bundle();
-            bundle.putString("CHANGE_DATE", currentDate);
-            viewDay_fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    viewDay_fragment).commit();
-            getSupportActionBar().setTitle(R.string.day);
+            if (check==1 || check == 2 || check == 3){
+                currentDate.setText(currDate);
+                try {
+                    calendar.setTime(formatDate(currDate));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, viewDay_fragment).commit();
+                check=0;
+            }else{
+                check=0;
+            }
         } else if (id == R.id.nav_month) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    viewMonth_fragment).commit();
-            getSupportActionBar().setTitle(R.string.month);
+            if (check==0 || check == 2 || check == 3){
+                currentDate.setText(mDay);
+                try {
+                    calendar.setTime(formatMonth(mDay));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, viewMonth_fragment).commit();
+                check =1;
+            }else{
+                check=1;
+            }
         } else if (id == R.id.nav_done_tasks) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    viewDoneTask_fragment).commit();
-            getSupportActionBar().setTitle(R.string.done_task);
+            if (check==0 || check == 1 || check == 3){
+                currentDate.setText(mDay);
+                try {
+                    calendar.setTime(formatMonth(mDay));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, viewDoneTask_fragment).commit();
+                check=2;
+            } else {
+                check=2;
+            }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, viewDoneTask_fragment).commit();
         } else if (id == R.id.nav_setting) {
             Intent intent = new Intent(MainActivity.this, SettingActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_later_tasks) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    viewLaterTask_fragment).commit();
-            getSupportActionBar().setTitle(R.string.later_task);
+            if (check==0 || check == 1 || check == 2){
+                currentDate.setText(mDay);
+                try {
+                    calendar.setTime(formatMonth(mDay));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, viewLaterTask_fragment).commit();
+                check=3;
+            }else {
+                check=3;
+            }
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -205,17 +361,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onMessageReadDay(CharSequence input) {
-
-    }
-
-    @Override
     public void onMessageReadMonth(CharSequence input) {
+        currentDate.setText(input);
+        try {
+            calendar.setTime(formatDate((String) input));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         Bundle bundle = new Bundle();
         bundle.putString("CHANGE_DATE", (String) input);
         viewDay_fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,viewDay_fragment).commit();
-        getSupportActionBar().setTitle(R.string.day);
+        check=0;
     }
 
     public static void hideSoftKeyboard(Activity activity) {
@@ -224,5 +381,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(
                 activity.getCurrentFocus().getWindowToken(), 0);
+    }
+    @Override
+    public void onMessageReadDay(CharSequence input) {
+    }
+    @Override
+    public void onMessageReadLater(CharSequence input) {
+    }
+    @Override
+    public void onMessageReadDone(CharSequence input) {
     }
 }

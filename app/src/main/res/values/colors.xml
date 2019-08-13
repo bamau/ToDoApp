@@ -12,4 +12,6 @@
     <color name="red">#F44336</color>
     <color name="light_green">#8BC34A</color>
     <color name="black">#000000</color>
+    <color name="gray1">#8B8B8B</color>
+    <color name="gray2">#616161</color>
 </resources>

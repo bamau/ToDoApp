@@ -233,7 +233,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
         editNote = dialog.findViewById(R.id.editNote);
         btnOk = dialog.findViewById(R.id.btn_ok);
         btnCancel = dialog.findViewById(R.id.btn_cancel);
-        if(!addNote.getText().toString().trim().equals(R.string.add_a_note))
+        if(!addNote.getText().toString().trim().equals("Add a note"))
         {
             editNote.setText(addNote.getText().toString().trim());
             edtName.setSelection(edtName.getText().length());
@@ -244,7 +244,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(editNote.getText().toString().trim().equals(""))
                     Toast.makeText(UpdateTaskActivity.this, R.string.you_can_not_add_empty_note, Toast.LENGTH_SHORT).show();
-                if(addNote.getText().toString().trim().equals(R.string.add_a_note))
+                if(addNote.getText().toString().trim().equals("Add a note"))
                     addNote.setText(null);
                 addNote.setText(editNote.getText().toString().trim());
                 dialog.dismiss();
@@ -300,12 +300,12 @@ public class UpdateTaskActivity extends AppCompatActivity {
             }else if(setTime.getText().toString().trim().equals(getString(R.string.set_time))) {
                 Toast.makeText(UpdateTaskActivity.this, R.string.please_set_a_time, Toast.LENGTH_SHORT).show();
             }else if (curDate.compareTo(nowDate)>0){
-                Toast.makeText(UpdateTaskActivity.this, "Please set date bigger!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UpdateTaskActivity.this, R.string.please_set_a_date_higher, Toast.LENGTH_SHORT).show();
             }else if (curDate.compareTo(nowDate)==0) {
                 if (nowTime == 0){
-                    Toast.makeText(UpdateTaskActivity.this, "Please set a time higher!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateTaskActivity.this, R.string.please_set_a_time_higher, Toast.LENGTH_SHORT).show();
                 }else  if (currTime>nowTime){
-                    Toast.makeText(UpdateTaskActivity.this, "Please set a time higher!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateTaskActivity.this, R.string.please_set_a_time_higher, Toast.LENGTH_SHORT).show();
                 }else if (currTime<nowTime){
                     Task task = createTaskWithOldId(idTask);
                     database.Update(task);
