@@ -19,7 +19,7 @@
         android:textStyle="bold"
         android:textColor="@color/white"
         android:text="@string/to_do_app"
-        android:textSize="60sp"
+        android:textSize="45sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
 </LinearLayout>

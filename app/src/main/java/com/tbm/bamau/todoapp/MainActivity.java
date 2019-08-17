@@ -306,6 +306,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                Bundle bundle = new Bundle();
+                bundle.putString("CHANGE_DATE", currDate);
+                viewDay_fragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, viewDay_fragment).commit();
                 check=0;
             }else{

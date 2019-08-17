@@ -81,8 +81,6 @@ public class ViewDay_Fragment extends Fragment {
             getListTaskOneDate(date, 0);
             getListDoneTaskOneDate(date,1);
         }
-        getListTaskOneDate(curentDate, 0);
-        getListDoneTaskOneDate(curentDate,1);
         return view;
     }
 

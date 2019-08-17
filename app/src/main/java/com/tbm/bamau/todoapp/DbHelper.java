@@ -106,11 +106,9 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
         return (int) ID;
     }
-
     /*
     Select a task by ID
      */
-
     public Task getTaskById(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TASKTABLE, new String[] { TASK_ID, TASK_STATUS,

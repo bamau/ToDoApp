@@ -12,12 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ChooseLanguageActivity" android:launchMode="standard"/>
-        <activity android:name=".UpdateTaskActivity" android:launchMode="standard"/>
-        <activity android:name=".AddNewTaskActivity" android:launchMode="standard"/>
-        <activity android:name=".SettingActivity" android:launchMode="standard"/>
-        <activity android:name=".ViewDetailTask" android:launchMode="standard"/>
-        <activity android:name=".Notification.MusicNotification" android:launchMode="standard"/>
+        <activity android:name=".ChooseLanguageActivity" android:launchMode="singleTask"/>
+        <activity android:name=".UpdateTaskActivity" android:launchMode="singleTask"/>
+        <activity android:name=".AddNewTaskActivity" android:launchMode="singleTask"/>
+        <activity android:name=".SettingActivity" android:launchMode="singleTask"/>
+        <activity android:name=".ViewDetailTask" android:launchMode="singleTask"/>
+        <activity android:name=".Notification.MusicNotification" android:launchMode="singleTask"/>
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
